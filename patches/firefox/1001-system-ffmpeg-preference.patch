@@ -1,0 +1,59 @@
+--- a/dom/media/platforms/PDMFactory.cpp
++++ b/dom/media/platforms/PDMFactory.cpp
+@@ -653,7 +653,7 @@
+     PDM_INIT_LOG("Insert system FFmpeg before ffvpx: {}",
+                  preferSystemForVulkan);
+     if (!StartupPDM(FFmpegRuntimeLinker::CreateDecoder(),
+-                    preferSystemForVulkan)) {
++                    preferSystemForVulkan || StaticPrefs::media_ffmpeg_preferred())) {
+       mFailureFlags += GetFailureFlagBasedOnFFmpegStatus(
+           FFmpegRuntimeLinker::LinkStatusCode());
+     }
+@@ -686,7 +686,8 @@
+     StartupPDM(FFVPXRuntimeLinker::CreateDecoder());
+ #ifdef MOZ_FFMPEG
+     if (StaticPrefs::media_ffmpeg_enabled() &&
+-        !StartupPDM(FFmpegRuntimeLinker::CreateDecoder())) {
++        !StartupPDM(FFmpegRuntimeLinker::CreateDecoder(),
++                    StaticPrefs::media_ffmpeg_preferred())) {
+       mFailureFlags += GetFailureFlagBasedOnFFmpegStatus(
+           FFmpegRuntimeLinker::LinkStatusCode());
+     }
+@@ -773,7 +774,8 @@
+     StartupPDM(FFVPXRuntimeLinker::CreateDecoder());
+ #ifdef MOZ_FFMPEG
+     if (StaticPrefs::media_ffmpeg_enabled() &&
+-        !StartupPDM(FFmpegRuntimeLinker::CreateDecoder())) {
++        !StartupPDM(FFmpegRuntimeLinker::CreateDecoder(),
++                    StaticPrefs::media_ffmpeg_preferred())) {
+       mFailureFlags += GetFailureFlagBasedOnFFmpegStatus(
+           FFmpegRuntimeLinker::LinkStatusCode());
+     }
+@@ -827,7 +829,8 @@
+   StartupPDM(FFVPXRuntimeLinker::CreateDecoder());
+ #ifdef MOZ_FFMPEG
+   if (StaticPrefs::media_ffmpeg_enabled() &&
+-      !StartupPDM(FFmpegRuntimeLinker::CreateDecoder())) {
++      !StartupPDM(FFmpegRuntimeLinker::CreateDecoder(),
++                    StaticPrefs::media_ffmpeg_preferred())) {
+     mFailureFlags += GetFailureFlagBasedOnFFmpegStatus(
+         FFmpegRuntimeLinker::LinkStatusCode());
+   }
+--- a/modules/libpref/init/StaticPrefList.yaml
++++ b/modules/libpref/init/StaticPrefList.yaml
+@@ -12944,6 +12944,15 @@
+     mirror: always
+ #endif  # MOZ_FFMPEG
+ 
++# Prefer system FFmpeg over bundled decoders. Useful for platform-specific
++# system FFmpeg integrations; leave disabled unless the backend is validated.
++#ifdef MOZ_FFMPEG
++- name: media.ffmpeg.preferred
++  type: RelaxedAtomicBool
++  value: false
++  mirror: always
++#endif
++
+ # Allow using ffmpeg encoder
+ -   name: media.ffmpeg.encoder.enabled
+     type: RelaxedAtomicBool

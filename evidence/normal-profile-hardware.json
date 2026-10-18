@@ -1,0 +1,26 @@
+{
+  "passed": true,
+  "launcher_environment_used": true,
+  "temporary_logging_only": true,
+  "outputs": [
+    [
+      "MediaCodec NDK video decoder (system FFmpeg) (RDD remote)",
+      "true"
+    ]
+  ],
+  "qti_decoders": [
+    "c2.qti.avc.decoder"
+  ],
+  "actual_executable": "${PREFIX}/lib/firefox/firefox",
+  "tracer": "0",
+  "loaded_libxul": [
+    "${PREFIX}/lib/firefox/libxul.so"
+  ],
+  "exit": 0,
+  "finished_epoch": 1792348262.4562662,
+  "publication": {
+    "source_receipt_sha256": "570528df12967b941f16fc39df522a66669eded75a6ca814ee01a3eea88b8bfa",
+    "sanitized": true,
+    "removed": "Normal-profile paths, session payloads, raw log tails and unrelated desktop configuration hashes."
+  }
+}

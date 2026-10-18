@@ -1,0 +1,19 @@
+{
+  "schema": 1,
+  "approved_firefox": [
+    {
+      "version": "158.0-1+fold1",
+      "architecture": "aarch64",
+      "package_sha256": "36a31cdb4b382858e6bc5e56e3df218dac7e48b501e3c706ae0c84a9e0991e2e",
+      "binaries": {
+        "firefox": "c163bb8e1be480f1e7b5c0fec1becee32df37d9710ccb585b205511dffdf0b88",
+        "libxul.so": "15c8a804c7220934f9d74f1efc96fe9581b76278508af37b079272d8642edb94"
+      },
+      "validation_sha256": "94d0dc43c5a95db973602f99aaec766b491344fd35ff8c376c9bf28ae4976103"
+    }
+  ],
+  "ffmpeg_abi": {
+    "libavcodec": 62,
+    "libavutil": 60
+  }
+}

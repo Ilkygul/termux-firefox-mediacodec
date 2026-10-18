@@ -1,0 +1,62 @@
+{
+  "validation": "${WORK_DIR}/validation-patched-1792346880096798101/summary.json",
+  "scope": "Browser process tree CPU and PSS; excludes Android codec services and battery/power.",
+  "cases": [
+    {
+      "name": "h264-4k-abba",
+      "browser_cpu": {
+        "software": [
+          100.19903334966607,
+          100.1466177666287
+        ],
+        "hardware": [
+          81.58639645347904,
+          80.2968118457438
+        ]
+      },
+      "cpu_reduction_pct": 19.198042284803872,
+      "pss_mib": {
+        "software": [
+          802.880859375,
+          825.8974609375
+        ],
+        "hardware": [
+          799.634765625,
+          864.806640625
+        ]
+      },
+      "all_zero_drops": true
+    },
+    {
+      "name": "vp9-abba",
+      "browser_cpu": {
+        "software": [
+          72.6014178326814,
+          73.80806903093374
+        ],
+        "hardware": [
+          50.0436002623563,
+          53.11634846356703
+        ]
+      },
+      "cpu_reduction_pct": 29.540120018301863,
+      "pss_mib": {
+        "software": [
+          554.3056640625,
+          546.431640625
+        ],
+        "hardware": [
+          583.0703125,
+          550.7197265625
+        ]
+      },
+      "all_zero_drops": true
+    }
+  ],
+  "epoch": 1792347379.8261025,
+  "publication": {
+    "source_receipt_sha256": "a6bab1055f28352db0020d09fd2f882a229e7d776686bfd6a91f14b06d3c802d",
+    "sanitized": true,
+    "removed": "Normal-profile paths, session payloads, raw log tails and unrelated desktop configuration hashes."
+  }
+}

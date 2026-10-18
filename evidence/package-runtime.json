@@ -1,0 +1,225 @@
+{
+  "cases": [
+    {
+      "media": "h264-4k.mp4",
+      "returncode": 0,
+      "passed": true,
+      "rows": [
+        {
+          "mode": "hardware",
+          "media": "h264-4k.mp4",
+          "native_direct": true,
+          "requires_output_selection_log": true,
+          "hardware_disabled_by_pref": false,
+          "requested_executable": "${WORK_DIR}/package-stage${PREFIX}/lib/firefox/firefox",
+          "mse": false,
+          "start": {
+            "ready": 4,
+            "width": 3840,
+            "audio": false
+          },
+          "pacing_requested": false,
+          "playback": {
+            "width": 3840,
+            "height": 2160,
+            "frames": 180,
+            "dropped": 0,
+            "pixelRange": 474,
+            "error": null,
+            "time": 8.001231,
+            "frameCallbackTiming": null
+          },
+          "pss_mib": 1094.375,
+          "processes": 11,
+          "cpu_one_core_pct": 105.181058347316,
+          "loaded_decoder_libraries": [
+            "${WORK_DIR}/package-stage${PREFIX}/lib/firefox/libmozavcodec.so",
+            "${WORK_DIR}/package-stage${PREFIX}/lib/firefox/libxul.so",
+            "${PREFIX}/lib/libavcodec.so.62.28.103",
+            "${PREFIX}/lib/libbinder_ndk.so",
+            "/system/lib64/libbinder_ndk.so"
+          ],
+          "expected_libxul": "${WORK_DIR}/package-stage${PREFIX}/lib/firefox/libxul.so",
+          "expected_libxul_loaded": true,
+          "seek": {
+            "time": 2.125708,
+            "ready": 4,
+            "error": null
+          },
+          "pause_resume": {
+            "stationary": true,
+            "advanced": true
+          },
+          "hardware_decoder_names": [
+            "c2.qti.avc.decoder"
+          ],
+          "codec_active": true,
+          "decoder_outputs": [
+            [
+              "MediaCodec NDK video decoder (system FFmpeg) (RDD remote)",
+              "true"
+            ]
+          ],
+          "output_hardware_decoder": true,
+          "actual_executable": "${WORK_DIR}/package-stage${PREFIX}/lib/firefox/firefox",
+          "tracer_pid": "TracerPid:\t0",
+          "checks_passed": true,
+          "exit": 0,
+          "leftover_owned_pids": [],
+          "cleanup_ok": true
+        }
+      ]
+    },
+    {
+      "media": "vp9-continuous.webm",
+      "returncode": 0,
+      "passed": true,
+      "rows": [
+        {
+          "mode": "hardware",
+          "media": "vp9-continuous.webm",
+          "native_direct": true,
+          "requires_output_selection_log": true,
+          "hardware_disabled_by_pref": false,
+          "requested_executable": "${WORK_DIR}/package-stage${PREFIX}/lib/firefox/firefox",
+          "mse": false,
+          "start": {
+            "ready": 4,
+            "width": 1920,
+            "audio": false
+          },
+          "pacing_requested": false,
+          "playback": {
+            "width": 1920,
+            "height": 1080,
+            "frames": 180,
+            "dropped": 0,
+            "pixelRange": 482,
+            "error": null,
+            "time": 8.003368,
+            "frameCallbackTiming": null
+          },
+          "pss_mib": 1035.478515625,
+          "processes": 11,
+          "cpu_one_core_pct": 95.42176162732868,
+          "loaded_decoder_libraries": [
+            "${WORK_DIR}/package-stage${PREFIX}/lib/firefox/libmozavcodec.so",
+            "${WORK_DIR}/package-stage${PREFIX}/lib/firefox/libxul.so",
+            "${PREFIX}/lib/libavcodec.so.62.28.103",
+            "${PREFIX}/lib/libbinder_ndk.so",
+            "/system/lib64/libbinder_ndk.so"
+          ],
+          "expected_libxul": "${WORK_DIR}/package-stage${PREFIX}/lib/firefox/libxul.so",
+          "expected_libxul_loaded": true,
+          "seek": {
+            "time": 2.288106,
+            "ready": 4,
+            "error": null
+          },
+          "pause_resume": {
+            "stationary": true,
+            "advanced": true
+          },
+          "hardware_decoder_names": [
+            "c2.qti.vp9.decoder"
+          ],
+          "codec_active": true,
+          "decoder_outputs": [
+            [
+              "MediaCodec NDK video decoder (system FFmpeg) (RDD remote)",
+              "true"
+            ]
+          ],
+          "output_hardware_decoder": true,
+          "actual_executable": "${WORK_DIR}/package-stage${PREFIX}/lib/firefox/firefox",
+          "tracer_pid": "TracerPid:\t0",
+          "checks_passed": true,
+          "exit": 0,
+          "leftover_owned_pids": [],
+          "cleanup_ok": true
+        }
+      ]
+    },
+    {
+      "media": "public-w3c-h264",
+      "returncode": 0,
+      "passed": true,
+      "rows": [
+        {
+          "mode": "hardware",
+          "media": "public-w3c-h264",
+          "native_direct": true,
+          "requires_output_selection_log": true,
+          "hardware_disabled_by_pref": false,
+          "requested_executable": "${WORK_DIR}/package-stage${PREFIX}/lib/firefox/firefox",
+          "document_origin": {
+            "origin": "https://media.w3.org",
+            "secure": true
+          },
+          "mse": false,
+          "start": {
+            "ready": 4,
+            "width": 854,
+            "audio": true
+          },
+          "pacing_requested": false,
+          "playback": {
+            "width": 854,
+            "height": 480,
+            "frames": 144,
+            "dropped": 0,
+            "pixelRange": 518,
+            "error": null,
+            "time": 7.980132,
+            "frameCallbackTiming": null
+          },
+          "pss_mib": 765.1298828125,
+          "processes": 11,
+          "cpu_one_core_pct": 107.31913284698298,
+          "loaded_decoder_libraries": [
+            "${WORK_DIR}/package-stage${PREFIX}/lib/firefox/libmozavcodec.so",
+            "${WORK_DIR}/package-stage${PREFIX}/lib/firefox/libxul.so",
+            "${PREFIX}/lib/libavcodec.so.62.28.103",
+            "${PREFIX}/lib/libbinder_ndk.so",
+            "/system/lib64/libbinder_ndk.so"
+          ],
+          "expected_libxul": "${WORK_DIR}/package-stage${PREFIX}/lib/firefox/libxul.so",
+          "expected_libxul_loaded": true,
+          "seek": {
+            "time": 2.455628,
+            "ready": 4,
+            "error": null
+          },
+          "pause_resume": {
+            "stationary": true,
+            "advanced": true
+          },
+          "hardware_decoder_names": [
+            "c2.qti.avc.decoder"
+          ],
+          "codec_active": true,
+          "decoder_outputs": [
+            [
+              "MediaCodec NDK video decoder (system FFmpeg) (RDD remote)",
+              "true"
+            ]
+          ],
+          "output_hardware_decoder": true,
+          "actual_executable": "${WORK_DIR}/package-stage${PREFIX}/lib/firefox/firefox",
+          "tracer_pid": "TracerPid:\t0",
+          "checks_passed": true,
+          "exit": 0,
+          "leftover_owned_pids": [],
+          "cleanup_ok": true
+        }
+      ]
+    }
+  ],
+  "complete": true,
+  "epoch": 1792347624.4505765,
+  "publication": {
+    "source_receipt_sha256": "162f7acff70490c60707a2d68284bc10987f0a914cafe17af996fc5e016e42a8",
+    "sanitized": true,
+    "removed": "Normal-profile paths, session payloads, raw log tails and unrelated desktop configuration hashes."
+  }
+}

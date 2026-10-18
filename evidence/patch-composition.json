@@ -1,0 +1,38 @@
+{
+  "epoch": 1792347057.243292,
+  "patches": [
+    {
+      "name": "1001-system-ffmpeg-preference.patch",
+      "sha256": "ea0c09613d227e34d83197f0a63c72cd0879868c20228116edbcbc3d892bdad0"
+    },
+    {
+      "name": "1002-native-mediacodec-prototype.patch",
+      "sha256": "8c35185aec490e38952cf7f14ada452fd30a04ca9dc8ae43d3c40c99e13f9da6"
+    },
+    {
+      "name": "1003-native-decoder-output-diagnostics.patch",
+      "sha256": "2157b92d9b42f0a8ff6a2ff105d0ca1b119de73ea02b1cbe81e37c84de2aee18"
+    },
+    {
+      "name": "1004-neon-interleaved-chroma.patch",
+      "sha256": "6cc5d5bf9dc3a9ab0898d7dcc9ba71f92ed7ea133be88c9f01bc5f426f778842"
+    }
+  ],
+  "baseline_reconstructed": true,
+  "all_four_applied_in_order": true,
+  "source_hashes": {
+    "dom/media/platforms/PDMFactory.cpp": "ab9791614b7cf615ae9e48dc094e9f0cffde7fff9db026840ff2910389af7bd9",
+    "dom/media/platforms/ffmpeg/FFmpegVideoDecoder.cpp": "3cf8a24ca1e2b32941f7b284742501a7f9e4c8505ecb60c668bad5b1f15d7374",
+    "dom/media/platforms/ffmpeg/FFmpegVideoDecoder.h": "83e0177cefef0d3422e3899a95322dc674b63a76fb085f424ceaad6f2099c7dd",
+    "dom/media/MediaFormatReader.cpp": "3a452370e02ebdf349cdfe8d328b1dd5f2fa61e19af404ebdbabbd4ced63b148",
+    "modules/libpref/init/StaticPrefList.yaml": "980bf23699df3911c142ae644981defead2cfb8064b84891d43d44c4c1f98e75",
+    "gfx/layers/ImageContainer.cpp": "ca2828ec58f0fa2b3b52b32331b509a5ed9de07abb222aeb44c641987233268e",
+    "gfx/layers/client/TextureClient.cpp": "9752e27a2c23024189cc0854e445ce23cf1b7a36f7b9f4bc0fd2630fb9607d07"
+  },
+  "all_match_live_source": true,
+  "publication": {
+    "source_receipt_sha256": "31855cd541831d6ef153740a85c7e5e44e3664ef968c9a4f0e28aa5013202e1a",
+    "sanitized": true,
+    "removed": "Normal-profile paths, session payloads, raw log tails and unrelated desktop configuration hashes."
+  }
+}

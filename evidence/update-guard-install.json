@@ -1,0 +1,14 @@
+{
+  "installed": true,
+  "protected_general_upgrade_simulation_passed": true,
+  "firefox_replacement_in_simulation": false,
+  "real_packages_upgraded": false,
+  "status": {
+    "version": "158.0-1+fold1",
+    "approved": true,
+    "runtime_abi_present": true,
+    "newer_repository_versions": []
+  },
+  "background_services_added": 0,
+  "persistent_holds_added": 0
+}

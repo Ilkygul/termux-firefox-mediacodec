@@ -1,0 +1,83 @@
+--- a/gfx/layers/ImageContainer.cpp
++++ b/gfx/layers/ImageContainer.cpp
+@@ -5,6 +5,10 @@
+ #include "ImageContainer.h"
+ 
+ #include <string.h>  // for memcpy, memset
++
++#if defined(__aarch64__) && defined(__BIONIC__) && defined(MOZ_WIDGET_GTK)
++#  include <arm_neon.h>
++#endif
+ 
+ #include "GLImages.h"  // for SurfaceTextureImage
+ #include "GPUVideoImage.h"
+@@ -922,6 +926,25 @@
+   if (!aSkip) {
+     // Fast path: planar input.
+     memcpy(aDst, aSrc, height * aStride);
++#if defined(__aarch64__) && defined(__BIONIC__) && defined(MOZ_WIDGET_GTK)
++  } else if (aSkip == 1 && aBytesPerElement == 1 && width > 0) {
++    // NV12 chroma: extract every other byte with NEON. Leave a scalar tail
++    // so a load never reads beyond the last valid sample of the V plane.
++    for (int y = 0; y < height; ++y) {
++      int x = 0;
++      for (; x < width - 16; x += 16) {
++        const uint8x16x2_t pixels = vld2q_u8(aSrc + 2 * x);
++        vst1q_u8(aDst + x, pixels.val[0]);
++      }
++      for (; x < width; ++x) {
++        aDst[x] = aSrc[2 * x];
++      }
++      // Preserve the existing guarantee that destination padding is zero.
++      memset(aDst + width, 0, aStride - width);
++      aSrc += aStride;
++      aDst += aStride;
++    }
++#endif
+   } else {
+     for (int y = 0; y < height; ++y) {
+       const uint8_t* src = aSrc;
+--- a/gfx/layers/client/TextureClient.cpp
++++ b/gfx/layers/client/TextureClient.cpp
+@@ -5,6 +5,10 @@
+ #include "mozilla/layers/TextureClient.h"
+ 
+ #include <stdint.h>  // for uint8_t, uint32_t, etc
++
++#if defined(__aarch64__) && defined(__BIONIC__) && defined(MOZ_WIDGET_GTK)
++#  include <arm_neon.h>
++#endif
+ 
+ #include "BufferTexture.h"
+ #include "ImageContainer.h"  // for PlanarYCbCrData, etc
+@@ -1942,6 +1946,30 @@
+     return true;
+   }
+ 
++#if defined(__aarch64__) && defined(__BIONIC__) && defined(MOZ_WIDGET_GTK)
++  if (bytesPerPixel == 1 && aDst.bytesPerPixel == 1 && skip == 1 &&
++      aDst.skip == 0 && size.width > 0 && size.height > 0 &&
++      int64_t(size.width) * 2 - 1 <= stride && aDst.stride >= size.width) {
++    // Interleaved 8-bit chroma to planar storage. Keeping a scalar tail
++    // avoids a one-byte overread when this is the V channel of NV12.
++    const uint8_t* src = data;
++    uint8_t* dst = aDst.data;
++    for (int32_t y = 0; y < size.height; ++y) {
++      int32_t x = 0;
++      for (; x < size.width - 16; x += 16) {
++        const uint8x16x2_t pixels = vld2q_u8(src + 2 * x);
++        vst1q_u8(dst + x, pixels.val[0]);
++      }
++      for (; x < size.width; ++x) {
++        dst[x] = src[2 * x];
++      }
++      src += stride;
++      dst += aDst.stride;
++    }
++    return true;
++  }
++#endif
++
+   MOZ_ASSERT(bytesPerPixel == 1 || bytesPerPixel == 2);
+   // slow path
+   if (bytesPerPixel == 1) {

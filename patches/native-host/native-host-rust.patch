@@ -1,0 +1,17 @@
+--- a/build/moz.configure/rust.configure
++++ b/build/moz.configure/rust.configure
+@@ -550,7 +550,13 @@
+ @checking("for rust host triplet")
+ @imports(_from="textwrap", _import="dedent")
+ def rust_host_triple(rustc, host, rustc_host, rust_supported_targets, arm_target):
+-    rustc_target = detect_rustc_target(host, arm_target, rust_supported_targets)
++    # Termux maps Android to GNU for GTK builds. Native Rust still correctly
++    # identifies its Bionic host as aarch64-linux-android.
++    if (host.cpu == "aarch64" and host.alias.endswith("linux-android")
++            and rustc_host == "aarch64-linux-android"):
++        rustc_target = rustc_host
++    else:
++        rustc_target = detect_rustc_target(host, arm_target, rust_supported_targets)
+     if rustc_target != rustc_host:
+         if host.alias == rustc_target:
+             configure_host = host.alias

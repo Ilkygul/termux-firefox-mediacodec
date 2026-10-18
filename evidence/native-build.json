@@ -1,0 +1,19 @@
+{
+  "pid": 15722,
+  "stage": "build",
+  "log": "${WORK_DIR}/native-build-11.log",
+  "cpus": [
+    6,
+    7
+  ],
+  "build_jobs": 2,
+  "status": "finished",
+  "started_epoch": 1792346835.2933414,
+  "returncode": 0,
+  "elapsed_seconds": 40.00626243301667,
+  "publication": {
+    "source_receipt_sha256": "248c3d454f78c8c073c89a5e40b1da2b7af3c3a7988ba8a6434703341651dcb5",
+    "sanitized": true,
+    "removed": "Normal-profile paths, session payloads, raw log tails and unrelated desktop configuration hashes."
+  }
+}

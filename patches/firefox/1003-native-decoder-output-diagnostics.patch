@@ -1,0 +1,17 @@
+--- a/dom/media/MediaFormatReader.cpp
++++ b/dom/media/MediaFormatReader.cpp
+@@ -1822,6 +1822,14 @@
+         if (!decoder.mHasReportedVideoHardwareSupportTelemtry ||
+             wasHardwareAccelerated != decoder.mIsHardwareAccelerated) {
+           decoder.mHasReportedVideoHardwareSupportTelemtry = true;
++#if defined(__BIONIC__) && defined(MOZ_WIDGET_GTK)
++          // Record actual output, including decoders instantiated lazily and
++          // hardware-to-software fallback, without logging every video frame.
++          MOZ_LOG_FMT(sFormatDecoderLog, mozilla::LogLevel::Info,
++                      "Termux video output: description=\"{}\", hw=\"{}\"",
++                      mVideo.mDecoder->GetDescriptionName(),
++                      static_cast<bool>(decoder.mIsHardwareAccelerated));
++#endif
+           VideoData* videoData = sample->As<VideoData>();
+           glean::media::video_hardware_decoding_support
+               .Get(decoder.GetCurrentInfo()->mMimeType)

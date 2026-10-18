@@ -1,0 +1,411 @@
+{
+  "stage": "baseline",
+  "binary": "${WORK_DIR}/obj-native/dist/bin/firefox",
+  "version": "Mozilla Firefox 158.0",
+  "tracer_pid": "0",
+  "cases": [
+    {
+      "name": "h264",
+      "media": "h264.mp4",
+      "options": {},
+      "passed": true,
+      "returncode": 0,
+      "rows": [
+        {
+          "mode": "software",
+          "media": "h264.mp4",
+          "native_direct": true,
+          "requires_output_selection_log": false,
+          "hardware_disabled_by_pref": false,
+          "requested_executable": "${WORK_DIR}/obj-native/dist/bin/firefox",
+          "mse": false,
+          "start": {
+            "ready": 4,
+            "width": 1920,
+            "audio": false
+          },
+          "pacing_requested": false,
+          "playback": {
+            "width": 1920,
+            "height": 1080,
+            "frames": 180,
+            "dropped": 0,
+            "pixelRange": 481,
+            "error": null,
+            "time": 8.002199,
+            "frameCallbackTiming": null
+          },
+          "pss_mib": 524.3056640625,
+          "processes": 11,
+          "cpu_one_core_pct": 53.56328814515817,
+          "loaded_decoder_libraries": [
+            "${WORK_DIR}/obj-native/dist/bin/libmozavcodec.so",
+            "${WORK_DIR}/obj-native/dist/bin/libxul.so",
+            "${PREFIX}/lib/libavcodec.so.62.28.103"
+          ],
+          "expected_libxul": "${WORK_DIR}/obj-native/dist/bin/libxul.so",
+          "expected_libxul_loaded": true,
+          "seek": {
+            "time": 2.446369,
+            "ready": 4,
+            "error": null
+          },
+          "pause_resume": {
+            "stationary": true,
+            "advanced": true
+          },
+          "hardware_decoder_names": [],
+          "codec_active": false,
+          "decoder_outputs": [],
+          "output_hardware_decoder": false,
+          "actual_executable": "${WORK_DIR}/obj-native/dist/bin/firefox",
+          "tracer_pid": "TracerPid:\t0",
+          "checks_passed": true,
+          "exit": 0,
+          "leftover_owned_pids": [],
+          "cleanup_ok": true
+        }
+      ]
+    },
+    {
+      "name": "h264-4k",
+      "media": "h264-4k.mp4",
+      "options": {},
+      "passed": true,
+      "returncode": 0,
+      "rows": [
+        {
+          "mode": "software",
+          "media": "h264-4k.mp4",
+          "native_direct": true,
+          "requires_output_selection_log": false,
+          "hardware_disabled_by_pref": false,
+          "requested_executable": "${WORK_DIR}/obj-native/dist/bin/firefox",
+          "mse": false,
+          "start": {
+            "ready": 4,
+            "width": 3840,
+            "audio": false
+          },
+          "pacing_requested": false,
+          "playback": {
+            "width": 3840,
+            "height": 2160,
+            "frames": 180,
+            "dropped": 0,
+            "pixelRange": 483,
+            "error": null,
+            "time": 7.956781,
+            "frameCallbackTiming": null
+          },
+          "pss_mib": 780.529296875,
+          "processes": 11,
+          "cpu_one_core_pct": 89.75426333030697,
+          "loaded_decoder_libraries": [
+            "${WORK_DIR}/obj-native/dist/bin/libmozavcodec.so",
+            "${WORK_DIR}/obj-native/dist/bin/libxul.so",
+            "${PREFIX}/lib/libavcodec.so.62.28.103"
+          ],
+          "expected_libxul": "${WORK_DIR}/obj-native/dist/bin/libxul.so",
+          "expected_libxul_loaded": true,
+          "seek": {
+            "time": 2.248545,
+            "ready": 4,
+            "error": null
+          },
+          "pause_resume": {
+            "stationary": true,
+            "advanced": true
+          },
+          "hardware_decoder_names": [],
+          "codec_active": false,
+          "decoder_outputs": [],
+          "output_hardware_decoder": false,
+          "actual_executable": "${WORK_DIR}/obj-native/dist/bin/firefox",
+          "tracer_pid": "TracerPid:\t0",
+          "checks_passed": true,
+          "exit": 0,
+          "leftover_owned_pids": [],
+          "cleanup_ok": true
+        }
+      ]
+    },
+    {
+      "name": "vp9",
+      "media": "vp9-continuous.webm",
+      "options": {},
+      "passed": true,
+      "returncode": 0,
+      "rows": [
+        {
+          "mode": "software",
+          "media": "vp9-continuous.webm",
+          "native_direct": true,
+          "requires_output_selection_log": false,
+          "hardware_disabled_by_pref": false,
+          "requested_executable": "${WORK_DIR}/obj-native/dist/bin/firefox",
+          "mse": false,
+          "start": {
+            "ready": 4,
+            "width": 1920,
+            "audio": false
+          },
+          "pacing_requested": false,
+          "playback": {
+            "width": 1920,
+            "height": 1080,
+            "frames": 180,
+            "dropped": 0,
+            "pixelRange": 489,
+            "error": null,
+            "time": 7.970289,
+            "frameCallbackTiming": null
+          },
+          "pss_mib": 516.291015625,
+          "processes": 11,
+          "cpu_one_core_pct": 61.52603323889869,
+          "loaded_decoder_libraries": [
+            "${WORK_DIR}/obj-native/dist/bin/libmozavcodec.so",
+            "${WORK_DIR}/obj-native/dist/bin/libxul.so",
+            "${PREFIX}/lib/libavcodec.so.62.28.103"
+          ],
+          "expected_libxul": "${WORK_DIR}/obj-native/dist/bin/libxul.so",
+          "expected_libxul_loaded": true,
+          "seek": {
+            "time": 2.365201,
+            "ready": 4,
+            "error": null
+          },
+          "pause_resume": {
+            "stationary": true,
+            "advanced": true
+          },
+          "hardware_decoder_names": [],
+          "codec_active": false,
+          "decoder_outputs": [],
+          "output_hardware_decoder": false,
+          "actual_executable": "${WORK_DIR}/obj-native/dist/bin/firefox",
+          "tracer_pid": "TracerPid:\t0",
+          "checks_passed": true,
+          "exit": 0,
+          "leftover_owned_pids": [],
+          "cleanup_ok": true
+        }
+      ]
+    },
+    {
+      "name": "av1-fallback",
+      "media": "av1.webm",
+      "options": {
+        "PROBE_EXPECT_SOFTWARE": "1"
+      },
+      "passed": true,
+      "returncode": 0,
+      "rows": [
+        {
+          "mode": "software",
+          "media": "av1.webm",
+          "native_direct": true,
+          "requires_output_selection_log": false,
+          "hardware_disabled_by_pref": false,
+          "requested_executable": "${WORK_DIR}/obj-native/dist/bin/firefox",
+          "mse": false,
+          "start": {
+            "ready": 4,
+            "width": 640,
+            "audio": false
+          },
+          "pacing_requested": false,
+          "playback": {
+            "width": 640,
+            "height": 360,
+            "frames": 180,
+            "dropped": 0,
+            "pixelRange": 459,
+            "error": null,
+            "time": 7.987063,
+            "frameCallbackTiming": null
+          },
+          "pss_mib": 460.85546875,
+          "processes": 11,
+          "cpu_one_core_pct": 75.91957220823306,
+          "loaded_decoder_libraries": [
+            "${WORK_DIR}/obj-native/dist/bin/libmozavcodec.so",
+            "${WORK_DIR}/obj-native/dist/bin/libxul.so",
+            "${PREFIX}/lib/libavcodec.so.62.28.103"
+          ],
+          "expected_libxul": "${WORK_DIR}/obj-native/dist/bin/libxul.so",
+          "expected_libxul_loaded": true,
+          "seek": {
+            "time": 2.452993,
+            "ready": 4,
+            "error": null
+          },
+          "pause_resume": {
+            "stationary": true,
+            "advanced": true
+          },
+          "hardware_decoder_names": [],
+          "codec_active": false,
+          "decoder_outputs": [],
+          "output_hardware_decoder": false,
+          "actual_executable": "${WORK_DIR}/obj-native/dist/bin/firefox",
+          "tracer_pid": "TracerPid:\t0",
+          "checks_passed": true,
+          "exit": 0,
+          "leftover_owned_pids": [],
+          "cleanup_ok": true
+        }
+      ]
+    },
+    {
+      "name": "10bit-fallback",
+      "media": "h264-10bit.mp4",
+      "options": {
+        "PROBE_EXPECT_SOFTWARE": "1"
+      },
+      "passed": true,
+      "returncode": 0,
+      "rows": [
+        {
+          "mode": "software",
+          "media": "h264-10bit.mp4",
+          "native_direct": true,
+          "requires_output_selection_log": false,
+          "hardware_disabled_by_pref": false,
+          "requested_executable": "${WORK_DIR}/obj-native/dist/bin/firefox",
+          "mse": false,
+          "start": {
+            "ready": 4,
+            "width": 640,
+            "audio": false
+          },
+          "pacing_requested": false,
+          "playback": {
+            "width": 640,
+            "height": 360,
+            "frames": 180,
+            "dropped": 0,
+            "pixelRange": 500,
+            "error": null,
+            "time": 7.983909,
+            "frameCallbackTiming": null
+          },
+          "pss_mib": 466.009765625,
+          "processes": 11,
+          "cpu_one_core_pct": 79.33600246010316,
+          "loaded_decoder_libraries": [
+            "${WORK_DIR}/obj-native/dist/bin/libmozavcodec.so",
+            "${WORK_DIR}/obj-native/dist/bin/libxul.so",
+            "${PREFIX}/lib/libavcodec.so.62.28.103"
+          ],
+          "expected_libxul": "${WORK_DIR}/obj-native/dist/bin/libxul.so",
+          "expected_libxul_loaded": true,
+          "seek": {
+            "time": 2.450261,
+            "ready": 4,
+            "error": null
+          },
+          "pause_resume": {
+            "stationary": true,
+            "advanced": true
+          },
+          "hardware_decoder_names": [],
+          "codec_active": false,
+          "decoder_outputs": [],
+          "output_hardware_decoder": false,
+          "actual_executable": "${WORK_DIR}/obj-native/dist/bin/firefox",
+          "tracer_pid": "TracerPid:\t0",
+          "checks_passed": true,
+          "exit": 0,
+          "leftover_owned_pids": [],
+          "cleanup_ok": true
+        }
+      ]
+    },
+    {
+      "name": "streaming-aac",
+      "media": "h264-high-audio.mp4",
+      "options": {
+        "PROBE_MSE": "1"
+      },
+      "passed": true,
+      "returncode": 0,
+      "rows": [
+        {
+          "mode": "software",
+          "media": "h264-high-audio.mp4",
+          "native_direct": true,
+          "requires_output_selection_log": false,
+          "hardware_disabled_by_pref": false,
+          "requested_executable": "${WORK_DIR}/obj-native/dist/bin/firefox",
+          "mse": true,
+          "start": {
+            "ready": 4,
+            "width": 1920,
+            "audio": true
+          },
+          "pacing_requested": false,
+          "playback": {
+            "width": 1920,
+            "height": 1080,
+            "frames": 180,
+            "dropped": 0,
+            "pixelRange": 499,
+            "error": null,
+            "time": 7.970783,
+            "frameCallbackTiming": null
+          },
+          "pss_mib": 557.93359375,
+          "processes": 11,
+          "cpu_one_core_pct": 63.253608545454654,
+          "loaded_decoder_libraries": [
+            "${WORK_DIR}/obj-native/dist/bin/libmozavcodec.so",
+            "${WORK_DIR}/obj-native/dist/bin/libxul.so",
+            "${PREFIX}/lib/libavcodec.so.62.28.103"
+          ],
+          "expected_libxul": "${WORK_DIR}/obj-native/dist/bin/libxul.so",
+          "expected_libxul_loaded": true,
+          "seek": {
+            "time": 2.407396,
+            "ready": 4,
+            "error": null
+          },
+          "pause_resume": {
+            "stationary": true,
+            "advanced": true
+          },
+          "hardware_decoder_names": [],
+          "codec_active": false,
+          "decoder_outputs": [],
+          "output_hardware_decoder": false,
+          "actual_executable": "${WORK_DIR}/obj-native/dist/bin/firefox",
+          "tracer_pid": "TracerPid:\t0",
+          "checks_passed": true,
+          "exit": 0,
+          "leftover_owned_pids": [],
+          "cleanup_ok": true
+        }
+      ]
+    }
+  ],
+  "complete": true,
+  "artifact_fingerprints": {
+    "firefox": {
+      "path": "${WORK_DIR}/obj-native/dist/bin/firefox",
+      "sha256": "9d3e173ee794592c2bacd4f26811c95465fb0a31315129dbbf11220931424515",
+      "bytes": 669664
+    },
+    "libxul.so": {
+      "path": "${WORK_DIR}/obj-native/dist/bin/libxul.so",
+      "sha256": "c11d52de18b203ab428e4a07349f2d6e730f97962229d7bafcfd12e88f12a898",
+      "bytes": 239704496
+    }
+  },
+  "artifacts_unchanged": true,
+  "publication": {
+    "source_receipt_sha256": "bdb5f2784005a8af829783ce653b7e8939eeba420e50c96868ec1c45525835e4",
+    "sanitized": true,
+    "removed": "Normal-profile paths, session payloads, raw log tails and unrelated desktop configuration hashes."
+  }
+}

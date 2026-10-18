@@ -1,0 +1,34 @@
+{
+  "tracer_pid": "0",
+  "real_native_apt": true,
+  "isolated_dpkg_status": true,
+  "refusing_dpkg_stub": true,
+  "live_dpkg_status_unchanged": true,
+  "cases": [
+    {
+      "package": "firefox",
+      "expected_guard_block": true,
+      "guard_message": true,
+      "dpkg_stub_reached": false,
+      "exit": 100,
+      "passed": true
+    },
+    {
+      "package": "ffmpeg",
+      "expected_guard_block": true,
+      "guard_message": true,
+      "dpkg_stub_reached": false,
+      "exit": 100,
+      "passed": true
+    },
+    {
+      "package": "mediacodec-guard-fixture",
+      "expected_guard_block": false,
+      "guard_message": false,
+      "dpkg_stub_reached": true,
+      "exit": 100,
+      "passed": true
+    }
+  ],
+  "passed": true
+}

@@ -1,0 +1,44 @@
+{
+  "epoch": 1792348391.4158146,
+  "passed": true,
+  "version": "158.0-1+fold1",
+  "package_verify": "",
+  "package_audit": "",
+  "firefox_updates_held": false,
+  "panel_runtime_cache_only": true,
+  "policy": "Hardware decoder defaults enabled; backups disabled; 32 MiB disk-cache limit; no forced DPI",
+  "user_overrides": {
+    "media.ffmpeg.preferred": [],
+    "media.ffmpeg.mediacodec.enabled": [],
+    "media.hardware-video-decoding.enabled": [],
+    "layout.css.devPixelsPerPx": []
+  },
+  "bitwarden_pinned": true,
+  "extensions": [
+    {
+      "id": "uBlock0@raymondhill.net",
+      "version": "1.75.0",
+      "active": true,
+      "signedState": 2
+    },
+    {
+      "id": "{446900e4-71c2-419f-a6a7-df9c091e268b}",
+      "version": "2026.10.0",
+      "active": true,
+      "signedState": 2
+    }
+  ],
+  "normal_hardware_test": true,
+  "default_link_test": true,
+  "temporary_owned_processes": [],
+  "build_residue_removed": true,
+  "installed_browser_packages": [
+    "firefox\tinstalled\t158.0-1+fold1"
+  ],
+  "android_opener_preserved": true,
+  "publication": {
+    "source_receipt_sha256": "41242e5dd383f117cbc442951b500bfade11dab072cf4afb2e9ececb8f4ba351",
+    "sanitized": true,
+    "removed": "Normal-profile paths, session payloads, raw log tails and unrelated desktop configuration hashes."
+  }
+}

@@ -1,0 +1,258 @@
+--- a/dom/media/platforms/ffmpeg/FFmpegVideoDecoder.cpp
++++ b/dom/media/platforms/ffmpeg/FFmpegVideoDecoder.cpp
+@@ -32,6 +32,10 @@
+ #endif
+ 
+ #include <algorithm>
++#if defined(__BIONIC__) && defined(MOZ_WIDGET_GTK)
++#  include <dlfcn.h>
++#  include "prinit.h"
++#endif
+ 
+ #include "mozilla/ToString.h"
+ #include "mozilla/UniquePtr.h"
+@@ -73,6 +77,7 @@
+ 
+ #if LIBAVCODEC_VERSION_MAJOR < 54
+ #  define AV_PIX_FMT_YUV420P PIX_FMT_YUV420P
++#  define AV_PIX_FMT_NV12 PIX_FMT_NV12
+ #  define AV_PIX_FMT_YUVJ420P PIX_FMT_YUVJ420P
+ #  define AV_PIX_FMT_YUV420P10LE PIX_FMT_YUV420P10LE
+ #  define AV_PIX_FMT_YUV422P PIX_FMT_YUV422P
+@@ -996,6 +1001,7 @@
+       mTrackingId(std::move(aTrackingId)),
+       // Value may be changed later when codec is known after initialization.
+       m8BitOutput(a8BitOutput) {
++  mTermuxMediaCodecAllowed = !aDisableHardwareDecoding;
+   FFMPEG_LOG("FFmpegVideoDecoder::FFmpegVideoDecoder MIME {} Codec ID {}",
+              aConfig.mMimeType.get(), static_cast<int>(mCodecID));
+   // Use a new MediaByteBuffer as the object will be modified during
+@@ -1083,6 +1089,86 @@
+          0 == strncmp(aCodec->name, "vp9", 3);
+ }
+ 
++#if defined(__BIONIC__) && defined(MOZ_WIDGET_GTK) && \
++    !defined(USING_MOZFFVPX) && LIBAVCODEC_VERSION_MAJOR >= 62
++// Android 15+ Codec2 needs a process-side Binder pool even without a Java VM.
++// Keep the library loaded because its threads live until decoder-process exit.
++static PRStatus StartTermuxBinderPool() {
++  void* library = dlopen("libbinder_ndk.so", RTLD_NOW | RTLD_LOCAL);
++  if (!library) {
++    return PR_FAILURE;
++  }
++  auto setMax = reinterpret_cast<bool (*)(uint32_t)>(
++      dlsym(library, "ABinderProcess_setThreadPoolMaxThreadCount"));
++  auto start = reinterpret_cast<void (*)()>(
++      dlsym(library, "ABinderProcess_startThreadPool"));
++  if (!start) {
++    dlclose(library);
++    return PR_FAILURE;
++  }
++  if (setMax) {
++    setMax(1);
++  }
++  start();
++  return PR_SUCCESS;
++}
++
++MediaResult FFmpegVideoDecoder<LIBAV_VER>::InitTermuxMediaCodecDecoder() {
++  if (!mTermuxMediaCodecAllowed ||
++      !StaticPrefs::media_hardware_video_decoding_enabled_AtStartup() ||
++      mLowLatency || mInfo.HasAlpha() ||
++      mInfo.mColorDepth != gfx::ColorDepth::COLOR_8) {
++    return MediaResult(NS_ERROR_DOM_MEDIA_FATAL_ERR,
++                       RESULT_DETAIL("MediaCodec not eligible for this stream"));
++  }
++  const char* name = nullptr;
++  switch (mCodecID) {
++    case AV_CODEC_ID_H264: {
++      if (!mExtraData || mExtraData->Length() < 2 ||
++          mExtraData->Elements()[0] != 1) {
++        return MediaResult(NS_ERROR_DOM_MEDIA_FATAL_ERR,
++                           RESULT_DETAIL("MediaCodec needs AVC configuration"));
++      }
++      const uint8_t profile = mExtraData->Elements()[1];
++      if (profile != 66 && profile != 77 && profile != 88 && profile != 100) {
++        return MediaResult(NS_ERROR_DOM_MEDIA_FATAL_ERR,
++                           RESULT_DETAIL("MediaCodec AVC profile not validated"));
++      }
++      name = "h264_mediacodec";
++      break;
++    }
++    case AV_CODEC_ID_VP9:
++      name = "vp9_mediacodec";
++      break;
++    default:
++      return MediaResult(NS_ERROR_DOM_MEDIA_FATAL_ERR,
++                         RESULT_DETAIL("MediaCodec codec not validated"));
++  }
++  AVCodec* codec = mLib->avcodec_find_decoder_by_name(name);
++  if (!codec) {
++    return MediaResult(NS_ERROR_DOM_MEDIA_FATAL_ERR,
++                       RESULT_DETAIL("MediaCodec decoder not in system FFmpeg"));
++  }
++  static PRCallOnceType binderOnce;
++  if (PR_CallOnce(&binderOnce, StartTermuxBinderPool) != PR_SUCCESS) {
++    return MediaResult(NS_ERROR_DOM_MEDIA_FATAL_ERR,
++                       RESULT_DETAIL("MediaCodec Binder callbacks unavailable"));
++  }
++  AVDictionary* options = nullptr;
++  if (mLib->av_dict_set(&options, "ndk_codec", "1", 0) < 0) {
++    mLib->av_dict_free(&options);
++    return MediaResult(NS_ERROR_OUT_OF_MEMORY, __func__);
++  }
++  mUsingTermuxMediaCodec = true;
++  MediaResult result = InitDecoder(codec, &options);
++  mLib->av_dict_free(&options);
++  if (NS_FAILED(result)) {
++    mUsingTermuxMediaCodec = false;
++  }
++  return result;
++}
++#endif
++
+ RefPtr<MediaDataDecoder::InitPromise> FFmpegVideoDecoder<LIBAV_VER>::Init() {
+   AUTO_PROFILER_LABEL("FFmpegVideoDecoder::Init", MEDIA_PLAYBACK);
+   FFMPEG_LOG("FFmpegVideoDecoder, init, IsHardwareAccelerated={}\n",
+@@ -1091,7 +1177,17 @@
+   if (IsHardwareAccelerated()) {
+     return InitPromise::CreateAndResolve(TrackInfo::kVideoTrack, __func__);
+   }
+-  MediaResult rv = InitSWDecoder(nullptr);
++  MediaResult rv = MediaResult(NS_ERROR_DOM_MEDIA_FATAL_ERR,
++                               RESULT_DETAIL("MediaCodec not requested"));
++#if defined(__BIONIC__) && defined(MOZ_WIDGET_GTK) && \
++    !defined(USING_MOZFFVPX) && LIBAVCODEC_VERSION_MAJOR >= 62
++  if (StaticPrefs::media_ffmpeg_mediacodec_enabled()) {
++    rv = InitTermuxMediaCodecDecoder();
++  }
++#endif
++  if (NS_FAILED(rv)) {
++    rv = InitSWDecoder(nullptr);
++  }
+   if (NS_FAILED(rv)) {
+     return InitPromise::CreateAndReject(rv, __func__);
+   }
+@@ -1472,6 +1568,14 @@
+ #endif
+ 
+ void FFmpegVideoDecoder<LIBAV_VER>::InitCodecContext() {
++  if (mUsingTermuxMediaCodec) {
++    mCodecContext->width = mInfo.mImage.width;
++    mCodecContext->height = mInfo.mImage.height;
++    mCodecContext->thread_count = 1;
++    // Keep FFmpeg's default allocator. MediaCodec returns CPU-readable NV12;
++    // its buffers must survive decoder flush and therefore are refcounted.
++    return;
++  }
+   mCodecContext->width = mInfo.mImage.width;
+   mCodecContext->height = mInfo.mImage.height;
+ 
+@@ -1747,7 +1851,7 @@
+ 
+     MediaResult rv;
+ #  ifdef MOZ_USE_HWDECODE
+-    if (IsHardwareAccelerated()) {
++    if (IsHardwareAccelerated() && !mUsingTermuxMediaCodec) {
+ #    ifdef MOZ_WIDGET_GTK
+       mDecodeStats.UpdateDecodeTimes(Duration(mFrame));
+       if (mDecodeStats.IsDecodingSlow() &&
+@@ -1958,6 +2062,7 @@
+ gfx::ColorDepth FFmpegVideoDecoder<LIBAV_VER>::GetColorDepth(
+     const AVPixelFormat& aFormat) const {
+   switch (aFormat) {
++    case AV_PIX_FMT_NV12:
+     case AV_PIX_FMT_YUV420P:
+     case AV_PIX_FMT_YUVJ420P:
+     case AV_PIX_FMT_YUV422P:
+@@ -2076,6 +2181,12 @@
+   FFMPEG_LOG("Got one frame output with pts={} dts={} duration={}", aPts,
+              mFrame->pkt_dts, aDuration);
+ 
++  if (mUsingTermuxMediaCodec &&
++      mFrame->format != AV_PIX_FMT_NV12 &&
++      mFrame->format != AV_PIX_FMT_YUV420P) {
++    return MediaResult(NS_ERROR_DOM_MEDIA_DECODE_ERR,
++                       RESULT_DETAIL("Unsupported MediaCodec pixel format"));
++  }
+   VideoData::QuantizableBuffer b;
+   b.mPlanes[0].mData = mFrame->data[0];
+   b.mPlanes[1].mData = mFrame->data[1];
+@@ -2091,8 +2202,23 @@
+ 
+   b.mPlanes[0].mWidth = mFrame->width;
+   b.mPlanes[0].mHeight = mFrame->height;
+-  SetChromaPlaneGeometryFromAVFormat(b, static_cast<int>(mFrame->format),
+-                                     mFrame->width, mFrame->height);
++  const bool isNV12 = mUsingTermuxMediaCodec &&
++                      mFrame->format == AV_PIX_FMT_NV12;
++  SetChromaPlaneGeometryFromAVFormat(
++      b, isNV12 ? AV_PIX_FMT_YUV420P : static_cast<int>(mFrame->format),
++      mFrame->width, mFrame->height);
++  if (isNV12) {
++    if (!mFrame->data[1] ||
++        mFrame->linesize[1] < 2 * ((mFrame->width + 1) / 2)) {
++      return MediaResult(NS_ERROR_DOM_MEDIA_DECODE_ERR,
++                         RESULT_DETAIL("Invalid MediaCodec chroma stride"));
++    }
++    // VideoData's normal copy handles interleaved chroma via mSkip, avoiding
++    // an extra full-frame conversion buffer in the decoder.
++    b.mPlanes[2].mData = mFrame->data[1] + 1;
++    b.mPlanes[2].mStride = mFrame->linesize[1];
++    b.mPlanes[1].mSkip = b.mPlanes[2].mSkip = 1;
++  }
+   b.mYUVColorSpace = GetFrameColorSpace();
+   b.mColorPrimaries = GetFrameColorPrimaries();
+   b.mColorRange = GetFrameColorRange();
+@@ -2693,6 +2819,9 @@
+ 
+ bool FFmpegVideoDecoder<LIBAV_VER>::IsHardwareAccelerated(
+     nsACString& aFailureReason) const {
++  if (mUsingTermuxMediaCodec) {
++    return true;
++  }
+ #if defined(MOZ_USE_HWDECODE) && defined(MOZ_WIDGET_GTK)
+   return mUsingV4L2 || !!mVAAPIDeviceContext || !!mVulkanDeviceContext;
+ #elif defined(MOZ_ENABLE_D3D11VA)
+--- a/dom/media/platforms/ffmpeg/FFmpegVideoDecoder.h
++++ b/dom/media/platforms/ffmpeg/FFmpegVideoDecoder.h
+@@ -102,6 +102,9 @@
+   RefPtr<InitPromise> Init() override;
+   void InitCodecContext() MOZ_REQUIRES(sMutex) override;
+   nsCString GetDescriptionName() const override {
++    if (mUsingTermuxMediaCodec) {
++      return "MediaCodec NDK video decoder (system FFmpeg)"_ns;
++    }
+ #ifdef USING_MOZFFVPX
+     return "ffvpx video decoder"_ns;
+ #else
+@@ -174,6 +177,12 @@
+                           MediaDataDecoder::DecodedData& aResults);
+ 
+   bool IsHardwareAccelerated(nsACString& aFailureReason) const override;
++  bool mUsingTermuxMediaCodec = false;
++  bool mTermuxMediaCodecAllowed = false;
++#if defined(__BIONIC__) && defined(MOZ_WIDGET_GTK) && \
++    !defined(USING_MOZFFVPX) && LIBAVCODEC_VERSION_MAJOR >= 62
++  MediaResult InitTermuxMediaCodecDecoder();
++#endif
+ 
+ #ifdef CUSTOMIZED_BUFFER_ALLOCATION
+   layers::TextureClient* AllocateTextureClientForImage(
+--- a/modules/libpref/init/StaticPrefList.yaml
++++ b/modules/libpref/init/StaticPrefList.yaml
+@@ -12953,6 +12953,14 @@
+   mirror: always
+ #endif
+ 
++# Opt-in native Android NDK decoding in the Bionic GTK desktop build.
++#ifdef MOZ_FFMPEG
++- name: media.ffmpeg.mediacodec.enabled
++  type: RelaxedAtomicBool
++  value: false
++  mirror: always
++#endif
++
+ # Allow using ffmpeg encoder
+ -   name: media.ffmpeg.encoder.enabled
+     type: RelaxedAtomicBool

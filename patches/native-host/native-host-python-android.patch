@@ -1,0 +1,11 @@
+--- a/testing/mozbase/mozinfo/mozinfo/mozinfo.py
++++ b/testing/mozbase/mozinfo/mozinfo/mozinfo.py
+@@ -74,7 +74,7 @@
+     # windows/mingw python build (msys)
+     info["os"] = "win"
+     os_version = version = unknown
+-elif system == "Linux":
++elif system in ("Linux", "Android"):
+     import distro
+ 
+     distribution = distro.name().title()

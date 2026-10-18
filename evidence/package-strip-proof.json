@@ -1,0 +1,17 @@
+{
+  "firefox": {
+    "validated_unstripped_sha256": "2544b4195920f3a0c0a4aa9f90d6308717a80281cf3ff7e6194e81492ff3cf37",
+    "staged_sha256": "c163bb8e1be480f1e7b5c0fec1becee32df37d9710ccb585b205511dffdf0b88",
+    "matches_independent_llvm_strip": true
+  },
+  "libxul.so": {
+    "validated_unstripped_sha256": "a58be3a3c863c000d45a3991c07c444ce71a8b0ba9655217deb98cd11cacffdb",
+    "staged_sha256": "15c8a804c7220934f9d74f1efc96fe9581b76278508af37b079272d8642edb94",
+    "matches_independent_llvm_strip": true
+  },
+  "publication": {
+    "source_receipt_sha256": "ee120f99a018ec15a7ecc843f47a999f60d1dc8f23773ddb712dd2f5dd9ddac3",
+    "sanitized": true,
+    "removed": "Normal-profile paths, session payloads, raw log tails and unrelated desktop configuration hashes."
+  }
+}

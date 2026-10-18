@@ -1,0 +1,32 @@
+name: Build a pinned candidate (not hardware certification)
+on:
+  workflow_dispatch:
+    inputs:
+      stage:
+        description: Source stage
+        type: choice
+        options: [patched, baseline]
+        default: patched
+permissions:
+  contents: read
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 360
+    env:
+      BUILD_STAGE: ${{ inputs.stage }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+      - name: Official pinned Termux cross-build
+        run: bash scripts/build-on-linux.sh "$BUILD_STAGE" "$PWD/.work/cross"
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+        with:
+          name: unvalidated-${{ inputs.stage }}-candidate
+          path: |
+            .work/cross/output/*.deb
+            .work/cross/output/fold-build-evidence/
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 7

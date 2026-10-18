@@ -1,0 +1,83 @@
+{
+  "binary": "${WORK_DIR}/package-stage${PREFIX}/lib/firefox/firefox",
+  "passed": true,
+  "https": [
+    {
+      "url": "https://example.com/",
+      "title": "Example Domain",
+      "ready": "complete",
+      "secure": true,
+      "width": 831.5999755859375,
+      "height": 915.2999877929688,
+      "dpr": 2.2222222222222223
+    },
+    {
+      "url": "https://addons.mozilla.org/en-US/firefox/",
+      "title": "Add-ons for Firefox (en-US)",
+      "ready": "complete",
+      "secure": true,
+      "width": 831.5999755859375,
+      "height": 915.2999877929688,
+      "dpr": 2.2222222222222223
+    }
+  ],
+  "extensions": [
+    {
+      "id": "{446900e4-71c2-419f-a6a7-df9c091e268b}",
+      "version": "2026.10.0",
+      "isActive": true,
+      "signedState": 2,
+      "appDisabled": false
+    },
+    {
+      "id": "uBlock0@raymondhill.net",
+      "version": "1.75.0",
+      "isActive": true,
+      "signedState": 2,
+      "appDisabled": false
+    }
+  ],
+  "preferences": {
+    "preferred": true,
+    "mediacodec": true,
+    "hardware": true,
+    "backups": 0,
+    "cache": 32768,
+    "dpi": "-1.0",
+    "policiesStatus": 1
+  },
+  "toolbar": [
+    "sidebar-button",
+    "back-button",
+    "forward-button",
+    "stop-reload-button",
+    "customizableui-special-spring1",
+    "vertical-spacer",
+    "urlbar-container",
+    "customizableui-special-spring2",
+    "downloads-button",
+    "fxa-toolbar-menu-button",
+    "reset-pbm-toolbar-button",
+    "unified-extensions-button",
+    "_446900e4-71c2-419f-a6a7-df9c091e268b_-browser-action"
+  ],
+  "bitwarden_popup": {
+    "ready": "complete",
+    "bodyLength": 191,
+    "controls": 9
+  },
+  "tracer": "0",
+  "actual_executable": "${WORK_DIR}/package-stage${PREFIX}/lib/firefox/firefox",
+  "loaded_libxul": [
+    "${WORK_DIR}/package-stage${PREFIX}/lib/firefox/libxul.so",
+    "${WORK_DIR}/package-stage${PREFIX}/lib/firefox/libxul.so",
+    "${WORK_DIR}/package-stage${PREFIX}/lib/firefox/libxul.so"
+  ],
+  "exit": 0,
+  "finished_epoch": 1792347665.3951433,
+  "publication": {
+    "source_receipt_sha256": "bbf9bec9fcadd1fb40f6663c04a3266fc669d535d26363a64de29e84fd0b0804",
+    "sanitized": true,
+    "removed": "Normal-profile paths, session payloads, raw log tails and unrelated desktop configuration hashes."
+  }
+}

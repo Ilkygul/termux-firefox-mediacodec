@@ -1,0 +1,15 @@
+--- a/config/makefiles/rust.mk
++++ b/config/makefiles/rust.mk
+@@ -56,7 +56,12 @@
+ cargo_rustc_flags = $(CARGO_RUSTCFLAGS)
+ # Enable link-time optimization for release builds.
+ ifdef RUST_LIBRARY_LTO
++# On-device builds can select ThinLTO to reduce compiler peak memory.
++ifdef FOLD_NATIVE_RUST_LTO
++cargo_rustc_flags += -Clto=$(FOLD_NATIVE_RUST_LTO)
++else
+ cargo_rustc_flags += -Clto
++endif
+ endif
+ 
+ ifdef CARGO_INCREMENTAL

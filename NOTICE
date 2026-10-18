@@ -1,0 +1,21 @@
+Mozilla-derived source changes and original repository contributions are distributed
+under the Mozilla Public License 2.0. The license text is included in LICENSE.
+Upstream license notices in the target source remain in force. The patchset does
+not relicense third-party components such as the vendored glsl optimizer or Rust
+crates; their original source headers and licenses continue to apply.
+
+Mozilla Firefox source:
+https://archive.mozilla.org/pub/firefox/releases/158.0/source/
+https://www.mozilla.org/en-US/MPL/2.0/
+
+Official Termux build recipe and patches, downloaded separately with pinned hashes:
+https://github.com/termux/termux-packages
+
+The native runner configuration and test extraction were developed against those
+sources. tests/neon-copy-test.cpp includes small actual Mozilla image-copy function
+excerpts for before/after correctness testing. No full browser source archive,
+third-party extension bundle, profile, credentials or binary is included.
+
+Firefox, Mozilla, Termux, Qualcomm and Bitwarden are names/trademarks of their
+respective owners. No affiliation, endorsement or redistribution permission for
+branded binaries is implied by this repository.

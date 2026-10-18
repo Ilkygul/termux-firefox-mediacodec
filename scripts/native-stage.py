@@ -1,0 +1,44 @@
+#!/data/data/com.termux/files/usr/bin/python
+# SPDX-License-Identifier: MPL-2.0
+"""Run a native build stage inside the task directory; never installs Firefox."""
+from pathlib import Path
+import os,sys,subprocess,time,runpy,json,signal,argparse
+B=Path(__file__).resolve().parent
+parser=argparse.ArgumentParser(description=__doc__)
+parser.add_argument('stage',nargs='?',default='configure',choices=['configure','build'])
+parser.add_argument('--jobs',type=int,choices=[1,2],default=2)
+options=parser.parse_args();stage=options.stage
+env=runpy.run_path(str(B/'native-build-env.py'))['build_env']()
+if stage=='build':env['FOLD_NATIVE_BUILD_JOBS']=str(options.jobs)
+args=['python',str(B/'source-baseline/mach'),stage]
+if stage=='build':args+=['-j'+str(options.jobs)]
+def cpu_frequency(cpu):
+ try:return int(Path(f'/sys/devices/system/cpu/cpu{cpu}/cpufreq/cpuinfo_max_freq').read_text())
+ except (OSError,ValueError):return 0
+cpus=sorted(os.sched_getaffinity(0),key=lambda cpu:(-cpu_frequency(cpu),cpu))[:2]
+def limits():os.nice(10);os.sched_setaffinity(0,cpus)
+number=1
+while (B/f'native-{stage}-{number}.log').exists():number+=1
+log=B/f'native-{stage}-{number}.log'
+started=time.monotonic();proc=None
+try:
+ with log.open('wb') as f:
+  proc=subprocess.Popen(args,cwd=B/'source-baseline',env=env,stdout=f,stderr=f,start_new_session=True,preexec_fn=limits)
+  state={'pid':proc.pid,'stage':stage,'log':str(log),'cpus':cpus,'build_jobs':options.jobs if stage=='build' else None,'status':'running','started_epoch':time.time()}
+  (B/'native-stage-current.json').write_text(json.dumps(state,indent=2))
+  print(json.dumps(state),flush=True)
+  while proc.poll() is None:
+   time.sleep(10)
+   if proc.poll() is not None:break
+   memory=next((int(l.split()[1]) for l in Path('/proc/meminfo').read_text().splitlines() if l.startswith('MemAvailable:')),None)
+   print(json.dumps({'pid':proc.pid,'elapsed_seconds':round(time.monotonic()-started),'log_bytes':log.stat().st_size,'mem_available_mib':round(memory/1024) if memory else None}),flush=True)
+  state.update(status='finished',returncode=proc.returncode,elapsed_seconds=time.monotonic()-started)
+  (B/'native-stage-current.json').write_text(json.dumps(state,indent=2))
+ print('STAGE_RESULT',json.dumps(state),flush=True)
+ print(log.read_text(errors='replace')[-6500:],flush=True)
+ raise SystemExit(proc.returncode)
+finally:
+ if proc and proc.poll() is None:
+  os.killpg(proc.pid,signal.SIGTERM)
+  try:proc.wait(timeout=15)
+  except subprocess.TimeoutExpired:os.killpg(proc.pid,signal.SIGKILL);proc.wait()

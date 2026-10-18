@@ -1,0 +1,21 @@
+{
+  "command": [
+    "${WORK_DIR}/native-build-tools/bin/fold-native-clang++",
+    "-O2",
+    "-D__TERMUX__=1",
+    "-U__ANDROID__",
+    "-D_LIBCPP_HAS_NO_C11_ALIGNED_ALLOC",
+    "${WORK_DIR}/neon-copy-test.cpp",
+    "-o",
+    "${WORK_DIR}/neon-copy-test"
+  ],
+  "source_sha256": "c428f361dff3cc367c434db82cccc52ca98e9124599ab74aa83283bdfdf7f77c",
+  "returncode": 0,
+  "stdout": "guard_page_pixel_cases=576\nkind=0 optimized=0 iterations=400 ms=33.213 checksum=147\nkind=0 optimized=1 iterations=400 ms=31.810 checksum=147\nkind=1 optimized=0 iterations=400 ms=506.304 checksum=147\nkind=1 optimized=1 iterations=400 ms=28.149 checksum=147\n",
+  "stderr": "",
+  "publication": {
+    "source_receipt_sha256": "06a0faddb6110960c7387a49cb95e915b6d576ea3369d2f12154aceeeea4edc7",
+    "sanitized": true,
+    "removed": "Normal-profile paths, session payloads, raw log tails and unrelated desktop configuration hashes."
+  }
+}

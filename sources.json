@@ -1,0 +1,224 @@
+{
+  "firefox_version": "158.0",
+  "termux_revision": "e2b25a170e34052eb30fdb64da0593bc69499ca9",
+  "source_url": "https://archive.mozilla.org/pub/firefox/releases/158.0/source/firefox-158.0.source.tar.xz",
+  "source_sha256": "fc77f7801d7580a600af683cc367e261eb1ec74647e84a91b4a1e3c1dd5aa2bb",
+  "termux_patches": [
+    {
+      "name": "0001-configure-treat-termux-as-linux.patch",
+      "sha256": "6cdd8ff580914f6aa71257faae001f32af817580aa488b997b016753475da0c6"
+    },
+    {
+      "name": "0002-configure-fix-arm-options.patch",
+      "sha256": "2f3c5355e0659ab52d5404f37030e1c686583a50ae6cf7c5c8758a4036bbf4e3"
+    },
+    {
+      "name": "0003-configure-fix-rustflags.patch",
+      "sha256": "b625be3775896ccf3c24a6f9691ccbf5fbe51444bdf8cc5c6c7104e31b61cbef"
+    },
+    {
+      "name": "0004-configure-do-not-check-libstdcxx-headers.patch",
+      "sha256": "e2e1e7ed8f462fc13275a860103836cc048a89a46949f635fb09a185c80f5208"
+    },
+    {
+      "name": "0005-configure-do-not-append-sysroot.patch",
+      "sha256": "313846926ab6e7e2ef4118bc592be856c6c007e33c65a9036a9504d4d4ca06ec"
+    },
+    {
+      "name": "0006-configure-do-not-enable-alsa.patch",
+      "sha256": "96520665e7e0de49ca21c448fba622e1718609e174dc4deba276667510951402"
+    },
+    {
+      "name": "0007-fix-link-with-libcxx-18.patch",
+      "sha256": "6b0709ef0dc85f99ed982f894ca9359bf83644478b4b9e7d7c6fa2bf418e8018"
+    },
+    {
+      "name": "0008-fix-macros.patch",
+      "sha256": "255aa182707b0bc6923b1c54c069ab006c7dce5ae288bd451356499c51ed09d5"
+    },
+    {
+      "name": "0009-impl-posix-shmem.patch",
+      "sha256": "9d75d72738e20515f023fe217f5eccd2987945f591a2bddb6b636f2d160c1a69"
+    },
+    {
+      "name": "0010-do-not-check-time_t-for-system-libevent.patch",
+      "sha256": "6de6b93b1bc5690c85add277c46ee76deeb3c9e69bb0893f7dae25b0f3480625"
+    },
+    {
+      "name": "0011-use-UnderrunHandlerNoop.patch",
+      "sha256": "7212d294dea93649bc523eb3817bc17e24c6ef525b9fd6c0292043910c709db1"
+    },
+    {
+      "name": "0012-do-not-use-adaptive-mutex.patch",
+      "sha256": "8e8add4d0790764b80d38beafa54e43e8f40ed783b8c9737ede6453afd5babb1"
+    },
+    {
+      "name": "0013-fix-rust-compile.patch",
+      "sha256": "51dd27fba9138fc23f9555fc420999fbb09b1e27b52c6b4277f1a2aeb3aa90f8"
+    },
+    {
+      "name": "0014-unset-thread-priority-scheduling-macro.patch",
+      "sha256": "de8557cf35f011b9e29626414f2698d4f8f862dc14c1ef97bd31b432859090a0"
+    },
+    {
+      "name": "0015-protobuf-no-android-log.patch",
+      "sha256": "e04111550afefd4dc6017792a23aa63775f2400694b58778d8023712f406ef77"
+    },
+    {
+      "name": "0016-fix-include-dir-for-cpufeatures.patch",
+      "sha256": "89d352b14602e7b4e19a895346bd31a9518a3fdb6351742c83b8476ff554f8d2"
+    },
+    {
+      "name": "0017-fix-sigbus.patch",
+      "sha256": "e3ab682a57b9a08377d813d3cbf21f9b40d180e703e9829931d52cb427496ac1"
+    },
+    {
+      "name": "0018-do-not-call-get-pci-status.patch",
+      "sha256": "0a534b6a1c062ad163cdef2e194571158f0301de6065d32e8399e874fa7c5a89"
+    },
+    {
+      "name": "0019-fix-missing-include-for-zlib-module.patch",
+      "sha256": "ffd99a953b3e98d71a25db07849b7697f73ed92d5d58e9700f079b964047cfb9"
+    },
+    {
+      "name": "0020-configure-no-pack-relative-relocs.patch",
+      "sha256": "ef7406be739a186c0583752cfd7fc34807cb5944631212647a6b57b0e2cc186a"
+    },
+    {
+      "name": "0021-check-if-dlpi_name-is-nullptr-before-using.patch",
+      "sha256": "ad9fedf4881cbb264895442a906c1b3b750c1b8979f751d64ca199a66c375c2a"
+    },
+    {
+      "name": "0022-fix-missing-include-for-macro-MOZ_TRY-in-TimeZone.cpp.patch",
+      "sha256": "700e20965fb9d2f79f3df5ca313a4d9fa23616a72614ad3fab9061b519361256"
+    },
+    {
+      "name": "0023-disable-native-https-dns-resolve.patch",
+      "sha256": "80bcafff0f571a27278598b9fd0c869cb0491ecdcaff4eeaa27035b11923e5b2"
+    },
+    {
+      "name": "0024-webextensions.storage.sync.kinto-true.patch",
+      "sha256": "24cab0a3ce6ae868067705188acf948b04a006c7c65a2154e60d6e3291a3fec0"
+    },
+    {
+      "name": "0025-fix-popup-white-borders.patch",
+      "sha256": "2b7bd8338e2f81448a2e5f4dd7f35683d4015094ddcd45b35dfc6454d3860551"
+    },
+    {
+      "name": "0026-fix-tagged-pointer.patch",
+      "sha256": "0716753460056479fbac56ee37dae163ca6c599727ecbd6c7fc8c22ac6600173"
+    },
+    {
+      "name": "0027-prepend-prefix-to-nsXREDirProvider-absolute-paths.patch",
+      "sha256": "349d9d613e39fe7e0a37681112b53540392d2448010df62f32094ae34efca2da"
+    },
+    {
+      "name": "0028-rust-cc-do-not-concatenates-all-the-CFLAGS.patch",
+      "sha256": "5708a2be62f1a28eecfeb9e1863b337481284899dbaec243d43184f61667299a"
+    },
+    {
+      "name": "0029-fix-sigbus-2.patch",
+      "sha256": "c79c358be74630362f6a8d7c29cb19915c87fe6ff60af482fdad6c080e6fe571"
+    },
+    {
+      "name": "0030-tagged-pointer-2.patch",
+      "sha256": "eaa955b5700040a35b20f4c6598da71bf1421b0eb00797065f9283af77f0655b"
+    },
+    {
+      "name": "0031-do-not-use-ioprio-on-android.patch",
+      "sha256": "4b3fa717e6f7936b60c655b6fa69ea67c08b25c7c98e52a11671ed3ab6e97e61"
+    },
+    {
+      "name": "0031-fix-build-with-webspeech-disabled.patch",
+      "sha256": "473b07e15a6fa9d197ef136bb9809651420e588b5f85bcfef278f5b3e6f151b4"
+    }
+  ],
+  "native_host_patches": [
+    {
+      "name": "native-host-rust.patch",
+      "sha256": "d2e25c3958689a42951509e796040662950b92d66ec25651f8464e04a60b9656",
+      "purpose": "Match native Bionic ARM64 rustc host while GTK configuration treats Android as GNU."
+    },
+    {
+      "name": "native-host-python-android.patch",
+      "sha256": "ba66f2c7bd58f4e14a96ea76f9ff4cfe629068bd099c3d365332f6ba8676218c",
+      "purpose": "Recognize Python 3.14 Android system name as the Linux-kernel GTK build host instead of the unknown marker."
+    },
+    {
+      "name": "native-host-glslopt-log.patch",
+      "sha256": "f8176357fdbdd245e9f21df37fa127e9587823e1b5365aff238f0f99eb1e7752",
+      "purpose": "Use existing Linux stderr logging for the Termux-native glslopt build tool, avoiding private Android log/log.h.",
+      "vendor_file": "glsl-optimizer/src/util/os_misc.c",
+      "vendor_sha256": "874b2b5b0a03f98f1862018b8a8d0fa939c794e563e01f0d4a416b5fb1513bfe",
+      "vendored_checksum_updated": true
+    },
+    {
+      "name": "native-host-rust-thin-lto.patch",
+      "sha256": "9a55fd86760c82b705992bab981ce3299325d81febf13dfc64879134cc55855c",
+      "reason": "Full Rust LTO exhausted native Android Scudo mapping memory during gkrust. Select ThinLTO only through the isolated on-device build environment; default official build behavior remains unchanged."
+    },
+    {
+      "name": "native-host-pthread-name-api.patch",
+      "sha256": "84afa0a2ac58913fe77d26a9f7ecf955d97ad3833ddd7a95a735db3c868917dc",
+      "source_file": "js/src/threading/posix/PosixThread.cpp",
+      "before_sha256": "e9c770251757dfc6ea78422e03dd56989668c4e4fe019700929857e79a7e34f9",
+      "after_sha256": "26ed37632b3866d83f898f20dee4e580c3da12dffa2101abbed1d397b2764c5e",
+      "reason": "Native configure detects the runtime pthread_getname_np symbol, but Android API 24 headers correctly hide its API 26 declaration. Use Firefox\u2019s existing prctl fallback on Bionic targets below API 26."
+    }
+  ],
+  "feature_patches": [
+    {
+      "name": "1001-system-ffmpeg-preference.patch",
+      "sha256": "ea0c09613d227e34d83197f0a63c72cd0879868c20228116edbcbc3d892bdad0"
+    },
+    {
+      "name": "1002-native-mediacodec-prototype.patch",
+      "sha256": "8c35185aec490e38952cf7f14ada452fd30a04ca9dc8ae43d3c40c99e13f9da6"
+    },
+    {
+      "name": "1003-native-decoder-output-diagnostics.patch",
+      "sha256": "2157b92d9b42f0a8ff6a2ff105d0ca1b119de73ea02b1cbe81e37c84de2aee18"
+    },
+    {
+      "name": "1004-neon-interleaved-chroma.patch",
+      "sha256": "6cc5d5bf9dc3a9ab0898d7dcc9ba71f92ed7ea133be88c9f01bc5f426f778842"
+    }
+  ],
+  "termux_recipe_tree": {
+    "0001-configure-treat-termux-as-linux.patch": "3f9793d251b789f03ce2acfb16de1d90d768a968",
+    "0002-configure-fix-arm-options.patch": "e09bfba5d92b066ecedef13fe8d36813e2e5d690",
+    "0003-configure-fix-rustflags.patch": "db52da8b73f1b11eced9eb83de016b4542e303bc",
+    "0004-configure-do-not-check-libstdcxx-headers.patch": "622450ad77c59aebd96d8bdafff291810e9280ee",
+    "0005-configure-do-not-append-sysroot.patch": "efc52f03ae298d3996054b58af0246e5c76361bf",
+    "0006-configure-do-not-enable-alsa.patch": "4d1c340156b1f58082e193ad1aec3492c6a74996",
+    "0007-fix-link-with-libcxx-18.patch": "6d3f2db2dc838e29a1833daa72e4e5df7802f918",
+    "0008-fix-macros.patch": "750ce8de6ce470ca61833b9ddd4fba39b8c5586d",
+    "0009-impl-posix-shmem.patch": "2dfdd14aa49a6fbba2b854966e009364a4c5399a",
+    "0010-do-not-check-time_t-for-system-libevent.patch": "09dd3f37c42e96b7c4847a21426bb682a3d9aaea",
+    "0011-use-UnderrunHandlerNoop.patch": "d43816abb6e500b0414e015467e8f6fde772e450",
+    "0012-do-not-use-adaptive-mutex.patch": "559a93a3f00d8e31e08861b165f806233a6a4caf",
+    "0013-fix-rust-compile.patch": "449105951ed19403aa0ef444004e8758b6a5e697",
+    "0014-unset-thread-priority-scheduling-macro.patch": "a5dbac65fd29649a1b6061869da1aef308fff0d8",
+    "0015-protobuf-no-android-log.patch": "86a5b05c85a93876f539089f4a4856721d2d6a0e",
+    "0016-fix-include-dir-for-cpufeatures.patch": "6d0fc27eb8b1378e6c6363b20243aec40efa0b84",
+    "0017-fix-sigbus.patch": "5937475b2171269e560e23b1f9ec60e4827de7e8",
+    "0018-do-not-call-get-pci-status.patch": "9df74d855844adbf107014afc57fe986afaeff60",
+    "0019-fix-missing-include-for-zlib-module.patch": "7d326fcfb8b8f5ddecc4e21b2166118af2b72e7e",
+    "0020-configure-no-pack-relative-relocs.patch": "dbd04de3a9d522f845c3359851d31dc9bf32140c",
+    "0021-check-if-dlpi_name-is-nullptr-before-using.patch": "927ea20d34e897db95d37a7dfd31135b593c445f",
+    "0022-fix-missing-include-for-macro-MOZ_TRY-in-TimeZone.cpp.patch": "2346358c2ef9cdac5c21f6a7e8d8cc59d96c7360",
+    "0023-disable-native-https-dns-resolve.patch": "87a5dd644f0bbfbcda616008e3442414c333407f",
+    "0024-webextensions.storage.sync.kinto-true.patch": "05e68cfd440496edbc3a6c8c9108a188ff051ba4",
+    "0025-fix-popup-white-borders.patch": "7f86cd38b1dbf0f1ab762549ea5cf7de7a362257",
+    "0026-fix-tagged-pointer.patch": "929d9a098f2158e33305524ebad3b08fb5e9c67d",
+    "0027-prepend-prefix-to-nsXREDirProvider-absolute-paths.patch": "bcd513538234dfc7341dd2ac632eaace268fbafd",
+    "0028-rust-cc-do-not-concatenates-all-the-CFLAGS.patch": "adbf97ac92328c8f2d3afc3adfde20c8fc5b649d",
+    "0029-fix-sigbus-2.patch": "ccd6234521b85ea595cd8dc6c0575dd263c6ebc6",
+    "0030-tagged-pointer-2.patch": "6038fe9bcf50c4785ddfb1973ea896b61230e8ad",
+    "0031-do-not-use-ioprio-on-android.patch": "0206db9c4b94ca8745217b8928f6a61a36f7662f",
+    "0031-fix-build-with-webspeech-disabled.patch": "c32635b01ccc4cd131e7371e32f7a2b695cd93c4",
+    "build.sh": "6730a2fb50d1cf5c90ca08e762856c79dd0e890c",
+    "firefox.desktop": "9883de0a230aa456886b1510fd6e0d3cc24ac005",
+    "mozconfig.cfg": "f6e00c44bfa42bd25730d6f3db3c8eca2517991c"
+  }
+}

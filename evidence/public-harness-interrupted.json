@@ -1,0 +1,56 @@
+{
+  "complete": false,
+  "status": "intentionally-stopped",
+  "completed_cases": [
+    {
+      "name": "h264",
+      "passed": true
+    },
+    {
+      "name": "h264-4k",
+      "passed": true
+    },
+    {
+      "name": "vp9",
+      "passed": true
+    },
+    {
+      "name": "av1-fallback",
+      "passed": true
+    },
+    {
+      "name": "10bit-fallback",
+      "passed": true
+    },
+    {
+      "name": "streaming-aac",
+      "passed": true
+    },
+    {
+      "name": "h264-selection",
+      "passed": true
+    },
+    {
+      "name": "vp9-selection",
+      "passed": true
+    },
+    {
+      "name": "hardware-disabled",
+      "passed": true
+    },
+    {
+      "name": "concurrent-resize",
+      "passed": true
+    },
+    {
+      "name": "h264-4k-pacing",
+      "passed": true
+    },
+    {
+      "name": "vp9-pacing",
+      "passed": true
+    }
+  ],
+  "not_a_second_full_matrix_pass": true,
+  "primary_full_matrix_evidence": "runtime-original.json"
+}

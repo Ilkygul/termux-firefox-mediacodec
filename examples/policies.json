@@ -1,0 +1,14 @@
+{
+  "policies": {
+    "Preferences": {
+      "media.ffmpeg.preferred": {
+        "Value": true,
+        "Status": "default"
+      },
+      "media.ffmpeg.mediacodec.enabled": {
+        "Value": true,
+        "Status": "default"
+      }
+    }
+  }
+}

@@ -1,0 +1,62 @@
+{
+  "sanitized": true,
+  "raw_personal_environment_not_included": true,
+  "files": [
+    {
+      "file": "baseline-original.json",
+      "sha256": "3571e12b3fcbf674ab03c3da1ebe29020f4ce4ebb404c9febc0d5dc2b8ceb6e8"
+    },
+    {
+      "file": "desktop-smoke.json",
+      "sha256": "dbdda3c257e6e068fcb5321ed1d95731702c8a1c4bb78d806344de8d89554838"
+    },
+    {
+      "file": "environment-audit.json",
+      "sha256": "418680d4f0c47b7d8276943f250d160c776ae796298a3013b1af7250f46f91b5"
+    },
+    {
+      "file": "native-build.json",
+      "sha256": "c51a9b5a0334d738709260787580d529b05e1d24f06c484e9ca73b89ea36d44b"
+    },
+    {
+      "file": "neon-copy.json",
+      "sha256": "5efa934c66b9033b2445ac47d01f65d657852f50eb3e05b718160d80d83726a6"
+    },
+    {
+      "file": "normal-profile-hardware.json",
+      "sha256": "e2088ffab2454a4d1687d08e908c24e7c92548c820d65c0106535a9fd51a1d1f"
+    },
+    {
+      "file": "package-runtime.json",
+      "sha256": "43e203dd3a05d90f4fa69255f606f6c3fc9bf2eba639141139dfc4a70d1babc0"
+    },
+    {
+      "file": "package-strip-proof.json",
+      "sha256": "9ae395235cd50b290b0505a70d52e1f122a54f1509e23f8879e71c56b523ae73"
+    },
+    {
+      "file": "patch-composition.json",
+      "sha256": "cd95dda6ee60e0300f98ee46c6fb834dcabbcdcefa1948cbb9aea1f685c2eaa3"
+    },
+    {
+      "file": "performance-original.json",
+      "sha256": "f9d6ee3d112b59a9326477f1829091082b2cb0a6e513a5d33d2a8703d6b68ec0"
+    },
+    {
+      "file": "public-harness-interrupted.json",
+      "sha256": "3802443fcd496fce3afa9278b81de58f0933c62b48a9d0c6ada85415c54596e3"
+    },
+    {
+      "file": "runtime-original.json",
+      "sha256": "94d0dc43c5a95db973602f99aaec766b491344fd35ff8c376c9bf28ae4976103"
+    },
+    {
+      "file": "update-guard-install.json",
+      "sha256": "3893596819f0773bdab75cae32fe4f16dddb521581972b534c412efcd976d26a"
+    },
+    {
+      "file": "update-guard-native-apt.json",
+      "sha256": "bfcd052e4c7d655bac9f703afb39d8a9d53216d7dfae50458fb9cd6895a24f1b"
+    }
+  ]
+}
