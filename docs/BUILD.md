@@ -13,6 +13,13 @@ bash scripts/build-on-linux.sh patched /absolute/path/to/termux-firefox-build
 
 The baseline requires a clean recipe checkout. The patched stage copies all four feature patches into `x11-packages/firefox` and rebuilds Firefox. The official builder downloads source and dependencies. Outputs remain in the official Termux output directory; container/revision evidence is recorded there. No external cross-build was used for the original deployed browser; this is the supplied alternative route.
 
+The cross-build defaults to two build jobs. `FOLD_FIREFOX_BUILD_JOBS` selects a
+different positive integer for a larger build host. The wrapper passes it through
+Termux's explicit `-jN` option, which the pinned Firefox recipe forwards to
+`mach build`. Setting `CARGO_BUILD_JOBS` alone does not override Mozilla's jobserver.
+The completed build records the selected job count beside its other receipts.
+This change does not alter or restart an already running hosted build.
+
 Do not distribute official Firefox branding merely because the source configuration uses it. Review the upstream redistribution/trademark requirements separately.
 
 ## Reproduce the native on-phone route

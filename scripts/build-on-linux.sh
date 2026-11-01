@@ -3,6 +3,8 @@
 set -euo pipefail
 stage="${1:-baseline}"
 work="${2:-$PWD/fold-firefox-build}"
+jobs="${FOLD_FIREFOX_BUILD_JOBS:-2}"
+[[ "$jobs" =~ ^[1-9][0-9]*$ ]] || { echo 'FOLD_FIREFOX_BUILD_JOBS must be a positive integer.' >&2; exit 2; }
 case "$stage" in baseline|patched) ;; *) echo 'Usage: build-on-linux.sh baseline|patched [build-directory]' >&2; exit 2;; esac
 if [[ "$(uname -s)" != Linux || "$(uname -m)" != x86_64 ]]; then
  echo 'Use a Linux x86_64 build host for the official Termux cross-toolchain.' >&2; exit 2
@@ -59,13 +61,14 @@ fi
  extra=()
  [[ "$stage" != patched ]] || extra=(-f)
  if [[ "$stage" == patched ]]; then
-  ./scripts/run-docker.sh bash -lc 'export FOLD_NATIVE_RUST_LTO=thin CARGO_BUILD_JOBS=2; ./build-package.sh -a aarch64 -I -f firefox'
+  ./scripts/run-docker.sh bash -lc 'export FOLD_NATIVE_RUST_LTO=thin CARGO_BUILD_JOBS="$1"; ./build-package.sh "-j$1" -a aarch64 -I -f firefox' fold-firefox-build "$jobs"
  else
-  ./scripts/run-docker.sh ./build-package.sh -a aarch64 -I firefox
+  ./scripts/run-docker.sh bash -lc 'export CARGO_BUILD_JOBS="$1"; ./build-package.sh "-j$1" -a aarch64 -I firefox' fold-firefox-build "$jobs"
  fi
 )
 mkdir -p -- "$work/output/fold-build-evidence"
 docker image inspect ghcr.io/termux/package-builder@sha256:44999857244619e25bc8e3427904a16d36cc0c0e087704af039e5bdf94814ac9 > "$work/output/fold-build-evidence/builder-image.json"
 git -C "$work" rev-parse HEAD > "$work/output/fold-build-evidence/termux-revision.txt"
 printf '%s\n' "$stage" > "$work/output/fold-build-evidence/stage.txt"
+printf '%s\n' "$jobs" > "$work/output/fold-build-evidence/jobs.txt"
 echo 'Build finished. Packages are in the official Termux output directory; they are not installed on the phone.'
