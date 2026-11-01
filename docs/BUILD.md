@@ -30,10 +30,28 @@ Build cbindgen in the isolated tool directory rather than replacing a global ins
 ```sh
 CARGO_HOME="$PWD/.work/native/cargo-cache" cargo install --locked --root "$PWD/.work/native/native-build-tools" --version 0.29.4 cbindgen
 python .work/native/native-stage.py configure
-python .work/native/native-stage.py build --jobs 2
+python .work/native/native-stage.py build --jobs 1
 ```
 
-The wrapper targets API 24, uses ThinLTO, one Cargo job, low build priority and a two-core build affinity. The object directory and Cargo/cache data remain under `.work/native`. No updater or browser installation runs here.
+The wrapper targets API 24, uses ThinLTO, one build job by default, low build priority, two linker threads and affinity to the two highest-frequency available CPU cores. The object directory and Cargo/cache data remain under `.work/native`. No updater or browser installation runs here.
+
+Use `--jobs 2` only when two build tasks fit your available memory. Mozilla's
+jobserver also controls Cargo; `CARGO_BUILD_JOBS=1` alone does not override it.
+The controller checks memory and the existing desktop metrics cache every ten
+seconds. Compilation pauses below 1.5 GiB available memory, at a fresh CPU
+sensor temperature of at least 80 °C, or at a fresh total CPU load of at least
+85%. It resumes above 2 GiB, below 70 °C and below 65% CPU load. Configuration
+uses 512/768 MiB memory thresholds instead. Missing/stale desktop metrics are
+ignored; memory checks still run. These are local responsiveness settings,
+not measured universal safety limits or firmware thermal limits.
+
+Only the build's own process group is paused. SIGTERM to the controller resumes
+and terminates that group, waits for cleanup, and records a stopped state.
+The JSON PID identifies the child build, not its controller. No monitoring
+service is installed; the controller ends with the build. A real process-group
+unit test covers stopping a paused child and confirms that it is reaped. The
+resource controls were added after the original Firefox 158 deployment; this
+does not claim another complete 158 build or a new browser playback result.
 
 The preparation/runner scripts are the maintained form of the successful native settings. The public repository layout was reorganized after deployment; the original complete native build is proven by the archived receipts, not by a claim that a second full build was performed after that reorganization.
 

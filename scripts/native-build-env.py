@@ -15,7 +15,7 @@ def build_env():
   CC=str(B/'native-build-tools/bin/fold-native-clang'),CXX=str(B/'native-build-tools/bin/fold-native-clang++'),HOST_CC=str(B/'native-build-tools/bin/fold-native-clang'),HOST_CXX=str(B/'native-build-tools/bin/fold-native-clang++'),
   AR=str(P/'bin/llvm-ar'),RANLIB=str(P/'bin/llvm-ranlib'),
   CFLAGS='-O2 -fPIC -D__TERMUX__=1',CXXFLAGS='-O2 -fPIC -D__TERMUX__=1 -U__ANDROID__ -D_LIBCPP_HAS_NO_C11_ALIGNED_ALLOC',
-  CPPFLAGS='-I'+str(P/'include'),LDFLAGS='-L'+str(P/'lib')+' -Wl,-rpath,'+str(P/'lib')+' -landroid-shmem -landroid-spawn -llog',
+  CPPFLAGS='-I'+str(P/'include'),LDFLAGS='-L'+str(P/'lib')+' -Wl,-rpath,'+str(P/'lib')+' -landroid-shmem -landroid-spawn -llog -Wl,--threads=2',
   HOST_CFLAGS='-O2 -D__TERMUX__=1',HOST_CXXFLAGS='-O2 -D__TERMUX__=1 -U__ANDROID__ -D_LIBCPP_HAS_NO_C11_ALIGNED_ALLOC',
   PKG_CONFIG=str(P/'bin/pkg-config'),PKG_CONFIG_LIBDIR=str(P/'lib/pkgconfig')+':'+str(P/'share/pkgconfig'),
   CBINDGEN=str(B/'native-build-tools/bin/cbindgen'),LIBCLANG_PATH=str(P/'lib'),
