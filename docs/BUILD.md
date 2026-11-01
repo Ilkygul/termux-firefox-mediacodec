@@ -1,6 +1,6 @@
 # Build the pinned candidate
 
-The source archive, official Termux recipe revision, 32 official patch checksums and nine local patch checksums are recorded in [`sources.json`](../sources.json). They identify the successfully built source. **They do not make an old Firefox release safe to keep indefinitely.** Rebase the pins and patches for newer security releases.
+The source archive, official Termux recipe revision, 35 official patch checksums and nine local patch checksums are recorded in [`sources.json`](../sources.json). On this candidate branch they identify the Firefox 159 source used by the successful cross-build. The archived successful-build and playback receipts belong to Firefox 158; they do not validate the new candidate. **They do not make an old Firefox release safe to keep indefinitely.** Rebase the pins and patches for newer security releases.
 
 ## Official Linux cross-build route
 
@@ -12,6 +12,17 @@ bash scripts/build-on-linux.sh patched /absolute/path/to/termux-firefox-build
 ```
 
 The baseline requires a clean recipe checkout. The patched stage copies all four feature patches into `x11-packages/firefox` and rebuilds Firefox. The official builder downloads source and dependencies. Outputs remain in the official Termux output directory; container/revision evidence is recorded there. No external cross-build was used for the original deployed browser; this is the supplied alternative route.
+
+Both stages apply the same build-host ThinLTO selector and enable it. The baseline
+omits the four runtime feature patches. This keeps link optimization from
+confounding a future baseline/patched comparison; no new comparison is claimed.
+
+The cross-build defaults to two build jobs. `FOLD_FIREFOX_BUILD_JOBS` selects a
+different positive integer for a larger build host. The wrapper passes it through
+Termux's explicit `-jN` option, which the pinned Firefox recipe forwards to
+`mach build`. Setting `CARGO_BUILD_JOBS` alone does not override Mozilla's jobserver.
+The completed build records the selected job count beside its other receipts.
+This change does not alter or restart an already running hosted build.
 
 Do not distribute official Firefox branding merely because the source configuration uses it. Review the upstream redistribution/trademark requirements separately.
 
@@ -33,25 +44,23 @@ python .work/native/native-stage.py configure
 python .work/native/native-stage.py build --jobs 1
 ```
 
-The wrapper targets API 24, uses ThinLTO, one build job by default, low build priority, two linker threads and affinity to the two highest-frequency available CPU cores. The object directory and Cargo/cache data remain under `.work/native`. No updater or browser installation runs here.
+The wrapper targets API 24, uses ThinLTO, one build job by default, low build priority, two linker threads and affinity to the two highest-frequency available CPU cores. The object directory and Cargo/cache data remain under `.work/native`. No updater or browser installation runs here. Using `--jobs 2` enables two build tasks, including Cargo via Mozilla's jobserver; `CARGO_BUILD_JOBS=1` alone does not override that jobserver. The active candidate was resumed incrementally with `--jobs 1` after two simultaneous Rust compilations consumed unnecessary memory. The initial 3/4 GiB pause/resume thresholds also stalled a single Rust task while it retained memory; the maintained thresholds below reserve 1.5 GiB instead. They are local responsiveness settings, not measured universal safety limits.
 
-Use `--jobs 2` only when two build tasks fit your available memory. Mozilla's
-jobserver also controls Cargo; `CARGO_BUILD_JOBS=1` alone does not override it.
-The controller checks memory and the existing desktop metrics cache every ten
-seconds. Compilation pauses below 1.5 GiB available memory, at a fresh CPU
-sensor temperature of at least 80 °C, or at a fresh total CPU load of at least
-85%. It resumes above 2 GiB, below 70 °C and below 65% CPU load. Configuration
-uses 512/768 MiB memory thresholds instead. Missing/stale desktop metrics are
-ignored; memory checks still run. These are local responsiveness settings,
-not measured universal safety limits or firmware thermal limits.
+The controller samples available memory and the existing desktop metrics cache every
+10 seconds. During compilation it pauses only its own process group below 1.5 GiB
+available memory, at a fresh CPU temperature of at least 80 °C, or at a fresh total
+CPU utilization of at least 85%. It resumes above 2 GiB, below 70 °C and below 65%
+CPU utilization. Configuration uses 512/768 MiB memory thresholds instead. Missing
+or stale desktop metrics are ignored; memory checks still run. Temperature values
+use this environment's existing highest-readable CPU sensor, not a universal SoC
+junction-temperature measurement. These are conservative local build settings,
+not firmware thermal limits. Android's own thermal controls remain enabled.
 
-Only the build's own process group is paused. SIGTERM to the controller resumes
-and terminates that group, waits for cleanup, and records a stopped state.
-The JSON PID identifies the child build, not its controller. No monitoring
-service is installed; the controller ends with the build. A real process-group
-unit test covers stopping a paused child and confirms that it is reaped. The
-resource controls were added after the original Firefox 158 deployment; this
-does not claim another complete 158 build or a new browser playback result.
+No new monitoring service is installed. The controller exits when its build ends.
+Send SIGTERM to the controller process for cleanup: it resumes a paused build,
+terminates its own process group and waits for it. A forced SIGKILL cannot run that
+cleanup. The running browser, desktop and unrelated user workloads are untouched.
+The JSON status contains the child build PID; it is not the controller PID.
 
 The preparation/runner scripts are the maintained form of the successful native settings. The public repository layout was reorganized after deployment; the original complete native build is proven by the archived receipts, not by a claim that a second full build was performed after that reorganization.
 

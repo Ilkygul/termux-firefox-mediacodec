@@ -1,5 +1,15 @@
 # Test results and provenance
 
+## Firefox 159 deployed maintenance status
+
+Firefox 159.0-0+fold1 and FFmpeg 9.0.2-1 are installed. A bounded four-case
+maintenance smoke check passed, including actual H.264/VP9 hardware output,
+AV1 software fallback and the hardware-disable preference. The charged total,
+including earlier failed attempts, was 118.10 seconds. See
+[the maintenance result](MAINTENANCE-159.md) for scope, the Binder runtime fix,
+source provenance and deployment checks. All complete-matrix and performance
+results below are historical Firefox 158 results.
+
 The evidence files are sanitized exports of real development/deployment receipts. `publication.source_receipt_sha256` identifies each original private receipt; `evidence/index.json` fingerprints the public exports. Session payloads, raw log tails, profile paths and unrelated desktop hashes were removed. Paths are placeholders, not executable locations.
 
 ## Original native build and source validation

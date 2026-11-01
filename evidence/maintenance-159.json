@@ -1,0 +1,112 @@
+{
+  "protocol": "maintenance-smoke-v1",
+  "complete": true,
+  "budget_seconds": 120,
+  "charged_test_seconds": 118.09761403700395,
+  "cases": [
+    {
+      "name": "h264",
+      "passed": true,
+      "sample_ms": 6000,
+      "native_direct": true,
+      "tracer_pid": 0,
+      "expected_libxul_loaded": true,
+      "hardware_output": true,
+      "hardware_decoder_names": [
+        "c2.qti.avc.decoder"
+      ],
+      "frames": 180,
+      "dropped": 0,
+      "hardware_disabled_by_pref": false,
+      "clean_exit": true
+    },
+    {
+      "name": "vp9",
+      "passed": true,
+      "sample_ms": 6000,
+      "native_direct": true,
+      "tracer_pid": 0,
+      "expected_libxul_loaded": true,
+      "hardware_output": true,
+      "hardware_decoder_names": [
+        "c2.qti.vp9.decoder"
+      ],
+      "frames": 180,
+      "dropped": 0,
+      "hardware_disabled_by_pref": false,
+      "clean_exit": true
+    },
+    {
+      "name": "av1-fallback",
+      "passed": true,
+      "sample_ms": 6000,
+      "native_direct": true,
+      "tracer_pid": 0,
+      "expected_libxul_loaded": true,
+      "hardware_output": false,
+      "hardware_decoder_names": [],
+      "frames": 180,
+      "dropped": 0,
+      "hardware_disabled_by_pref": false,
+      "clean_exit": true
+    },
+    {
+      "name": "hardware-disabled",
+      "passed": true,
+      "sample_ms": 800,
+      "native_direct": true,
+      "tracer_pid": 0,
+      "expected_libxul_loaded": true,
+      "hardware_output": false,
+      "hardware_decoder_names": [],
+      "frames": 24,
+      "dropped": 0,
+      "hardware_disabled_by_pref": true,
+      "clean_exit": true
+    }
+  ],
+  "artifact_fingerprints": {
+    "firefox": {
+      "sha256": "373c852d472ee594549cc05e0c3a68615fc6c8c5a6653c9afcde7d820bb696f0",
+      "bytes": 500248
+    },
+    "libxul.so": {
+      "sha256": "63f6dc15f59cd692c621356f0da5aded657b127917e30dbe5b2be1dc5d0bcd70",
+      "bytes": 177028368
+    }
+  },
+  "codec_fingerprints": {
+    "libavcodec.so.63": {
+      "sha256": "7507bc3a06e4f2b0cc3512f6bd5b785dd8991af92212e2cd26b3d65375c9842c",
+      "bytes": 14495472
+    },
+    "libavutil.so.61": {
+      "sha256": "8925ef24494c7ca09b9f21851eee2304ccaf027ab582dd1813ebd61fef743986",
+      "bytes": 845888
+    },
+    "libbinder_ndk.so": {
+      "sha256": "506be3dc64ddd52836708bd569a98dfdebb296782e25d14bd424b1c10c52e7cd",
+      "bytes": 37288
+    }
+  },
+  "deployment": {
+    "firefox": "159.0-0+fold1",
+    "ffmpeg": "9.0.2-1",
+    "package_sha256": "7e0c9d11d1ef6e5f40eba9608e76606ad4f3302f185691fe475bd6da453607c8",
+    "dependency_and_package_audits": "passed",
+    "bitwarden": "existing signed active extension preserved"
+  },
+  "not_full_matrix_or_performance_certification": true,
+  "omitted": [
+    "4K",
+    "10-bit",
+    "streaming audio",
+    "concurrent resize",
+    "pacing",
+    "ABBA benchmarks"
+  ],
+  "publication": {
+    "source_receipt_sha256": "67b3adb4e5f25a3b9778161603ab258b55da5d747441cb09d1a86b26dd42162d",
+    "personal_paths_log_tails_and_profiles_excluded": true
+  }
+}

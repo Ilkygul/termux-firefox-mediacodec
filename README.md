@@ -2,7 +2,7 @@
 
 H.264 and VP9 hardware video decoding in the **native GTK/X11 Termux build of Firefox**, through system FFmpeg and Android's MediaCodec NDK API. The browser runs directly on Android/Bionic: no PRoot browser, codec proxy, extra decoding daemon, or emulated desktop architecture.
 
-This is a community source patchset and maintenance workflow, **not an official Mozilla or Termux release**. It was developed and tested on one Qualcomm Android phone running Termux:X11/XFCE. Other devices and codecs need their own validation. The patches currently target Firefox **158.0**, not arbitrary future releases.
+This is a community source patchset and maintenance workflow, **not an official Mozilla or Termux release**. It was developed and tested on one Qualcomm Android phone running Termux:X11/XFCE. Other devices and codecs need their own validation. The deployed version is **Firefox 159.0 / FFmpeg 9.0.2**, verified with a bounded four-case maintenance smoke check. The original complete matrix and performance measurements below belong to Firefox 158.0. They are not new Firefox 159 benchmarks.
 
 ## What was implemented
 
@@ -34,7 +34,7 @@ The final packaged browser also passed public HTTPS video, TLS verification, sig
 2. Follow the [build instructions](docs/BUILD.md). Build output is a **candidate**, not an approved release.
 3. Stage and run the [on-device tests](docs/TESTING.md). CI cannot certify an Android hardware decoder.
 4. Follow the [update-maintenance procedure](docs/UPDATES.md) before promoting a candidate.
-5. Review the [executed implementation plan](docs/EXECUTED-PLAN.md).
+5. Review the [executed implementation plan](docs/EXECUTED-PLAN.md) and [Firefox 159 maintenance result](docs/MAINTENANCE-159.md).
 
 For host-side guard tests, no browser or Android device is needed:
 
@@ -47,7 +47,7 @@ python3 scripts/check_repository.py
 
 The guard approves **exact package bytes and tested browser binaries**, not a version string or a filename containing “hardware.” General environment updates can keep the current validated Firefox using a temporary, per-command APT preference. No persistent `apt-mark hold` is added. Direct APT attempts to install an unknown Firefox package fail before unpacking.
 
-This protection is a maintenance obligation, not an endless security freeze: if a newer Firefox is available, the status command explicitly reports that a security update may be pending. Rebase, build, run the full matrix, approve the exact candidate, then install it. **An unported Firefox security update must not be silently ignored.** The upstream-monitor workflow signals recipe/release drift; it does not invent a tested replacement.
+This protection is a maintenance obligation, not an endless security freeze: if a newer Firefox is available, the status command explicitly reports that a security update may be pending. Rebase, build, validate and approve the exact candidate, then install it. The full matrix remains the default approval route; the explicitly selected maintenance smoke route checks four functional cases within a cumulative 120-second budget. **An unported Firefox security update must not be silently ignored.** The upstream-monitor workflow signals recipe/release drift; it does not invent a tested replacement.
 
 The guard covers APT transactions. Direct `dpkg`, manual file replacement, Android firmware changes and an intentional guard removal can bypass it. The FFmpeg precheck detects required ABI aliases and codec markers; it cannot prove that every same-ABI update behaves correctly at runtime. Run the video matrix after relevant codec/driver changes. No automatic rollback, profile backup or background service is installed.
 

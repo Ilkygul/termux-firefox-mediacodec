@@ -86,3 +86,8 @@ This pins the installed FFmpeg version only within that command, alongside Firef
 while preserving existing APT preferences. It does not approve a replacement or
 relax the package hook. Deferred browser and codec security updates still require
 prompt porting and validation. The default command does not pin FFmpeg implicitly.
+
+
+The explicitly selected, bounded maintenance smoke protocol and exact codec/runtime
+payload requirements are documented in [the Firefox 159 maintenance result](MAINTENANCE-159.md).
+The default approval path remains the full matrix.

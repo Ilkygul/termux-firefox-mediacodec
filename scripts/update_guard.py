@@ -20,6 +20,7 @@ CASES = {'h264', 'h264-4k', 'vp9', 'av1-fallback', '10bit-fallback',
          'streaming-aac', 'h264-selection', 'vp9-selection', 'hardware-disabled',
          'concurrent-resize', 'h264-4k-pacing', 'vp9-pacing',
          'h264-4k-abba', 'vp9-abba'}
+SMOKE_CASES = {'h264', 'vp9', 'av1-fallback', 'hardware-disabled'}
 class GuardError(Exception):
     pass
 
@@ -123,6 +124,11 @@ class Guard:
                           digest(self.prefix / 'lib/firefox' / name) == checksum
                           for name, checksum in e['binaries'].items())), None)
         if not entry: raise GuardError('Installed Firefox does not match an approved hardware build.')
+        for relative, checksum in entry.get('runtime_files', {}).items():
+            if relative not in ('bin/firefox', 'lib/firefox/native-system/libbinder_ndk.so') or not re.fullmatch(r'[0-9a-f]{64}', checksum):
+                raise GuardError('Invalid browser runtime-file approval.')
+            if not (self.prefix / relative).is_file() or digest(self.prefix / relative) != checksum:
+                raise GuardError('An approved browser launcher/runtime file changed: ' + relative)
         prefs = load(self.prefix / 'lib/firefox/distribution/policies.json')['policies']['Preferences']
         for name in ('media.ffmpeg.preferred', 'media.ffmpeg.mediacodec.enabled'):
             if prefs.get(name, {}).get('Value') is not True:
@@ -130,7 +136,8 @@ class Guard:
         for name, major in policy['ffmpeg_abi'].items():
             if not (self.prefix / 'lib' / f'{name}.so.{major}').is_file():
                 raise GuardError(f'Required runtime ABI disappeared: {name}.so.{major}')
-        return {'version': version, 'approved': True, 'runtime_abi_present': True}
+        return {'version': version, 'approved': True, 'runtime_abi_present': True,
+                'validation_protocol': entry.get('validation_protocol', 'full-matrix-v1')}
     def pending(self, installed):
         available = []
         result = subprocess.run([self.tool('apt-cache'), 'madison', 'firefox'], capture_output=True, text=True)
@@ -149,19 +156,34 @@ class Guard:
                 print('ACTION REQUIRED: newer Firefox repository versions are available: ' + ', '.join(state['newer_repository_versions']), file=sys.stderr)
                 print('Firefox security updates may be pending. Rebuild/test the newer release; do not leave it indefinitely deferred.', file=sys.stderr)
             print('This is a file/policy/ABI check, not a fresh hardware-playback test.')
+            if state['validation_protocol'] == 'maintenance-smoke-v1':
+                print('Validation scope: four functional smoke cases; no full-matrix/performance certification.')
         return state
-    def approve(self, package, validation_path, strip_path):
+    def approve(self, package, validation_path, strip_path, allow_smoke=False, codec_package=None):
         validation = load(validation_path); proof = load(strip_path) if strip_path else {}
         if validation.get('stage') != 'patched' or validation.get('complete') is not True or validation.get('artifacts_unchanged') is not True:
             raise GuardError('A completed patched runtime validation with unchanged artifacts is required.')
         cases = validation.get('cases', [])
-        if len(cases) != len(CASES) or {c.get('name') for c in cases} != CASES:
+        smoke = validation.get('protocol') == 'maintenance-smoke-v1'
+        if smoke:
+            if not allow_smoke:
+                raise GuardError('Maintenance smoke approval requires explicit --allow-maintenance-smoke.')
+            elapsed = validation.get('total_test_seconds')
+            if (validation.get('deadline_enforced') is not True or validation.get('budget_seconds') != 120
+                    or type(elapsed) not in (int, float) or not 0 < elapsed <= 120
+                    or validation.get('codecs_unchanged') is not True):
+                raise GuardError('A completed maintenance smoke run within the enforced two-minute budget is required.')
+            if not codec_package or self.metadata(codec_package)['Package'] != 'ffmpeg':
+                raise GuardError('Maintenance smoke approval requires the exact tested FFmpeg package.')
+        required = SMOKE_CASES if smoke else CASES
+        if len(cases) != len(required) or {c.get('name') for c in cases} != required:
+            if smoke: raise GuardError('All four maintenance smoke cases are required.')
             raise GuardError('The full 14-case runtime matrix is required.')
         for case in cases:
             rows = case.get('rows', [])
             if not case.get('passed') or not rows or not all(r.get('checks_passed') and r.get('cleanup_ok') and r.get('exit') == 0 for r in rows):
                 raise GuardError('Every case must contain passed runtime rows and clean shutdown.')
-            expected_modes = ['software', 'hardware', 'hardware', 'software'] if case['name'].endswith('-abba') else ['software', 'hardware']
+            expected_modes = ['hardware'] if smoke else (['software', 'hardware', 'hardware', 'software'] if case['name'].endswith('-abba') else ['software', 'hardware'])
             if [r.get('mode') for r in rows] != expected_modes:
                 raise GuardError('Required software/hardware comparison rows are missing.')
             for row in rows:
@@ -170,6 +192,15 @@ class Guard:
                 if row.get('mode') == 'hardware' and case['name'] not in ('av1-fallback', '10bit-fallback', 'hardware-disabled'):
                     if not row.get('output_hardware_decoder') or not row.get('hardware_decoder_names'):
                         raise GuardError('Actual decoded hardware output and codec-start evidence are required.')
+                if smoke and case['name'] in ('av1-fallback', 'hardware-disabled'):
+                    if row.get('output_hardware_decoder') is not False or row.get('hardware_decoder_names'):
+                        raise GuardError('Smoke fallback cases must prove software output.')
+                    if case['name'] == 'hardware-disabled' and row.get('hardware_disabled_by_pref') is not True:
+                        raise GuardError('The hardware-disable preference must actually be exercised.')
+                if smoke and case['name'] in ('h264', 'vp9'):
+                    codec = validation.get('codec_fingerprints', {}).get('libavcodec.so.63', {})
+                    if not case.get('expected_codec_loaded') or codec.get('path') not in row.get('loaded_decoder_libraries', []):
+                        raise GuardError('Smoke hardware rows must load the exact staged FFmpeg codec.')
         meta = self.metadata(package)
         if meta['Package'] != 'firefox' or meta['Architecture'] != 'aarch64': raise GuardError('Approve a native AArch64 Firefox package.')
         names = [str(self.prefix / 'lib/firefox' / name).lstrip('/') for name in ('firefox', 'libxul.so')]
@@ -185,6 +216,27 @@ class Guard:
             binaries[name] = actual[member]
         policy = self.policy(allow_empty=True); entry = {'version': meta['Version'], 'architecture': meta['Architecture'],
             'package_sha256': digest(package), 'binaries': binaries, 'validation_sha256': digest(validation_path)}
+        entry['validation_protocol'] = 'maintenance-smoke-v1' if smoke else 'full-matrix-v1'
+        if smoke:
+            codec_files = validation.get('codec_fingerprints', {})
+            members = {}
+            for name in ('libavcodec.so.63', 'libavutil.so.61'):
+                item = codec_files.get(name, {})
+                basename = Path(item.get('path', '')).name
+                if not re.fullmatch(re.escape(name) + r'(?:\.[0-9]+)*', basename):
+                    raise GuardError('Invalid tested codec fingerprint path.')
+                members[str(self.prefix / 'lib' / basename).lstrip('/')] = item.get('sha256')
+            codec_payload, _, _ = self.payload(codec_package, members)
+            if any(not checksum or codec_payload.get(name) != checksum for name, checksum in members.items()):
+                raise GuardError('FFmpeg package is not the tested codec payload.')
+            runtime_names = ['bin/firefox', 'lib/firefox/native-system/libbinder_ndk.so']
+            runtime_members = [str(self.prefix / name).lstrip('/') for name in runtime_names]
+            runtime, _, _ = self.payload(package, runtime_members)
+            bridge_hash = codec_files.get('libbinder_ndk.so', {}).get('sha256')
+            if not bridge_hash or runtime.get(runtime_members[1]) != bridge_hash or runtime_members[0] not in runtime:
+                raise GuardError('Package must contain the tested Binder bridge and its launcher.')
+            entry['runtime_files'] = dict(zip(runtime_names, [runtime[n] for n in runtime_members]))
+            entry['validated_ffmpeg_package_sha256'] = digest(codec_package)
         policy['approved_firefox'] = [e for e in policy['approved_firefox'] if e['package_sha256'] != entry['package_sha256']] + [entry]
         temporary = self.manifest.with_suffix('.tmp'); temporary.write_text(json.dumps(policy, indent=2) + '\n'); temporary.chmod(0o600); os.replace(temporary, self.manifest)
         print('Approved exact tested package:', meta['Version'])
@@ -217,6 +269,7 @@ def main(argv=None):
     status = sub.add_parser('status'); status.add_argument('--json', action='store_true')
     candidate = sub.add_parser('inspect'); candidate.add_argument('package', type=Path)
     approve = sub.add_parser('approve'); approve.add_argument('package', type=Path); approve.add_argument('--validation', type=Path, required=True); approve.add_argument('--strip-proof', type=Path)
+    approve.add_argument('--allow-maintenance-smoke', action='store_true'); approve.add_argument('--codec-package', type=Path)
     upgrade = sub.add_parser('protected-upgrade'); upgrade.add_argument('--keep-ffmpeg', action='store_true'); upgrade.add_argument('update_command', nargs=argparse.REMAINDER)
     args = parser.parse_args(argv); guard = Guard(args.prefix, args.manifest)
     try:
@@ -230,7 +283,7 @@ def main(argv=None):
             state = guard.status(emit=not args.json)
             if args.json: print(json.dumps(state, indent=2))
         elif args.command == 'inspect': print(json.dumps(guard.inspect_package(args.package)))
-        elif args.command == 'approve': guard.approve(args.package, args.validation, args.strip_proof)
+        elif args.command == 'approve': guard.approve(args.package, args.validation, args.strip_proof, allow_smoke=args.allow_maintenance_smoke, codec_package=args.codec_package)
         elif args.command == 'protected-upgrade':
             command = args.update_command
             if command[:1] == ['--']: command = command[1:]
