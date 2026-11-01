@@ -62,6 +62,21 @@ class GuardTests(unittest.TestCase):
             pin=Path(command[-1].split('=',1)[1]);observed.append(pin);self.assertIn('Pin: version 1.0+hw',pin.read_text());return subprocess.CompletedProcess(command,17)
         with patch.object(g.subprocess,'run',side_effect=run):self.assertEqual(self.guard.upgrade(['not-a-real-update']),17)
         self.assertFalse(observed[0].exists());self.assertFalse((self.prefix/'etc/apt/preferences').exists())
+    def test_opt_in_dependency_pin_preserves_preferences_and_is_temporary(self):
+        self.guard.status=lambda **kw:{'version':'1.0+hw'}
+        self.guard.run=lambda *args:'8.1.3'
+        preferences=self.prefix/'etc/apt/preferences';preferences.parent.mkdir(parents=True)
+        original='Package: unrelated\nPin: version 1.0\nPin-Priority: 700\n'
+        preferences.write_text(original);observed=[]
+        def run(command,**kw):
+            pin=Path(command[-1].split('=',1)[1]);observed.append(pin)
+            text=pin.read_text();self.assertIn(original,text)
+            self.assertIn('Package: ffmpeg\nPin: version 8.1.3',text)
+            return subprocess.CompletedProcess(command,17)
+        with patch.object(g.subprocess,'run',side_effect=run):
+            self.assertEqual(self.guard.upgrade(['not-a-real-update'],keep_ffmpeg=True),17)
+        self.assertEqual(preferences.read_text(),original)
+        self.assertFalse(observed[0].exists())
     def full_validation(self):
         # Explicitly synthetic receipts test authorization mechanics, never playback.
         rows=[{'mode':mode,'checks_passed':True,'cleanup_ok':True,'exit':0,'native_direct':True,'expected_libxul_loaded':True,'tracer_pid':'TracerPid: 0','output_hardware_decoder':mode=='hardware','hardware_decoder_names':['synthetic-test-only']} for mode in ['software','hardware']]

@@ -188,14 +188,21 @@ class Guard:
         policy['approved_firefox'] = [e for e in policy['approved_firefox'] if e['package_sha256'] != entry['package_sha256']] + [entry]
         temporary = self.manifest.with_suffix('.tmp'); temporary.write_text(json.dumps(policy, indent=2) + '\n'); temporary.chmod(0o600); os.replace(temporary, self.manifest)
         print('Approved exact tested package:', meta['Version'])
-    def upgrade(self, command):
+    def upgrade(self, command, keep_ffmpeg=False):
         state = self.status()
         if not command: raise GuardError('Provide an update command after --.')
         current = self.prefix / 'etc/apt/preferences'
         base = current.read_text() if current.exists() else ''
+        dependency_pin = ''
+        if keep_ffmpeg:
+            version = self.run('dpkg-query', '-W', '-f=${Version}', 'ffmpeg').strip()
+            if not re.fullmatch(r'[0-9A-Za-z.+:~_-]+', version):
+                raise GuardError('Cannot identify the installed FFmpeg version.')
+            dependency_pin = f'\nPackage: ffmpeg\nPin: version {version}\nPin-Priority: 1001\n'
+            print(f'Keeping FFmpeg {version} for this update only. Review deferred dependency/security updates.', flush=True)
         with tempfile.TemporaryDirectory(prefix='firefox-update-') as directory:
             pin = Path(directory) / 'preferences'
-            pin.write_text(base + f"\nPackage: firefox\nPin: version {state['version']}\nPin-Priority: 1001\n")
+            pin.write_text(base + f"\nPackage: firefox\nPin: version {state['version']}\nPin-Priority: 1001\n" + dependency_pin)
             print('Keeping the currently validated Firefox during this general update. No persistent apt hold is set.', flush=True)
             rc = subprocess.run([*command, '-o', 'Dir::Etc::preferences=' + str(pin)]).returncode
         self.status()
@@ -210,7 +217,7 @@ def main(argv=None):
     status = sub.add_parser('status'); status.add_argument('--json', action='store_true')
     candidate = sub.add_parser('inspect'); candidate.add_argument('package', type=Path)
     approve = sub.add_parser('approve'); approve.add_argument('package', type=Path); approve.add_argument('--validation', type=Path, required=True); approve.add_argument('--strip-proof', type=Path)
-    upgrade = sub.add_parser('protected-upgrade'); upgrade.add_argument('update_command', nargs=argparse.REMAINDER)
+    upgrade = sub.add_parser('protected-upgrade'); upgrade.add_argument('--keep-ffmpeg', action='store_true'); upgrade.add_argument('update_command', nargs=argparse.REMAINDER)
     args = parser.parse_args(argv); guard = Guard(args.prefix, args.manifest)
     try:
         if args.command == 'apt-hook':
@@ -227,7 +234,7 @@ def main(argv=None):
         elif args.command == 'protected-upgrade':
             command = args.update_command
             if command[:1] == ['--']: command = command[1:]
-            return guard.upgrade(command)
+            return guard.upgrade(command, args.keep_ffmpeg)
         return 0
     except (GuardError, OSError, ValueError, KeyError, tarfile.TarError) as exc:
         print('Firefox MediaCodec guard: ' + str(exc), file=sys.stderr)

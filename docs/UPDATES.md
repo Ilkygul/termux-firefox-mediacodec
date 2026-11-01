@@ -78,3 +78,11 @@ Direct `dpkg -i`, manual library replacement, another package manager, Android f
 To intentionally return to the official browser, first remove this project's APT hook and updater integration, explicitly accept temporary software decoding, then install the current official package. Keep the normal user profile; no backup or separate stale browser installation is required by this project.
 
 References: [APT hook protocol](https://manpages.debian.org/trixie/apt/apt.conf.5.en.html), [APT preferences](https://manpages.debian.org/trixie/apt/apt_preferences.5.en.html), [Termux package management](https://github.com/termux/termux-packages/wiki/Package-Management), [Mozilla Firefox security advisories](https://www.mozilla.org/en-US/security/known-vulnerabilities/firefox/).
+
+
+When an installed hardware build still requires the older FFmpeg ABI, a general
+update may explicitly use `protected-upgrade --keep-ffmpeg -- apt-get upgrade -y`.
+This pins the installed FFmpeg version only within that command, alongside Firefox,
+while preserving existing APT preferences. It does not approve a replacement or
+relax the package hook. Deferred browser and codec security updates still require
+prompt porting and validation. The default command does not pin FFmpeg implicitly.
