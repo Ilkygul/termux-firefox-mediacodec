@@ -76,3 +76,26 @@ Use that absolute binary path with `scripts/validate_runtime.py`. The full test 
 If building a native package manually, use Mozilla's `DESTDIR` installation target into an isolated directory. Mozilla's normal packager strips symbol tables. Either test the exact staged package binaries, or independently reproduce stripping and record the link from tested unstripped artifacts to staged hashes. Never copy a user profile into a package.
 
 Use a distinct local package revision, such as `158.0-1+mediacodec.1`, without making it sort above future upstream security releases. Candidate package metadata, hash and actual payload must be approved together. No prebuilt `.deb` is included in this repository.
+
+
+## Faster native builds on this phone
+
+After configuration, `bash .work/native/native-build.sh 6` uses all CPUs available
+to the controller, six build tasks and Mozilla's explicit `--priority normal`.
+The ordinary `mach build` default is idle priority; affinity alone does not
+remove that setting. `native-stage.py build --jobs 6 --full-power` runs one such
+attempt. The helper accepts one to eight jobs and retries only its explicit
+memory-pressure exit (75), reducing tasks to four, two and one. Compiler errors
+are reported directly, without speculative retries.
+
+Full-power mode checks available memory every two seconds. Below 1 GiB it stops
+only its own build group, retains completed objects and requests a retry; it does
+not freeze compilers while waiting for them to release their own memory. It uses
+no software CPU-utilization or temperature pause threshold. Android's thermal
+controls remain enabled. RAM is used on demand, with no fixed per-build quota.
+
+An existing object directory's build ID is retained during incremental resumes.
+This avoids regenerating timestamp-dependent Rust code merely because the task
+count changed. Use a fresh prepared work directory for a new source release.
+The conservative `native-stage.py` defaults remain available. Neither mode adds
+a resident monitoring service or installs a browser.
