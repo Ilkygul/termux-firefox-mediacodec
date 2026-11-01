@@ -6,7 +6,7 @@
 
 H.264 and VP9 hardware video decoding in the **native GTK/X11 Termux build of Firefox**, through system FFmpeg and Android's MediaCodec NDK API. The browser runs directly on Android/Bionic: no PRoot browser, codec proxy, extra decoding daemon, or emulated desktop architecture.
 
-This is a community source patchset and maintenance workflow, **not an official Mozilla or Termux release**. It was developed and tested on one Qualcomm Android phone running Termux:X11/XFCE. Other devices and codecs need their own validation. The patches currently target Firefox **158.0**, not arbitrary future releases.
+This is a community source patchset and maintenance workflow, **not an official Mozilla or Termux release**. It was developed and tested on one Qualcomm Android phone running Termux:X11/XFCE. Other devices and codecs need their own validation. The deployed, validated patchset targets Firefox **158.0**. This candidate branch ports it to **159.0**; the historical browser measurements below belong to 158.0 and do not validate the candidate. Neither patchset targets arbitrary future releases.
 
 ## What was implemented
 

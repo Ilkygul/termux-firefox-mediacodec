@@ -1,5 +1,25 @@
 # Test results and provenance
 
+## Firefox 159 candidate status
+
+The 159.0 source port is pinned in `sources.json`; it is not yet an installed or
+runtime-approved browser. The 22 existing host checks pass. A new process-group
+cleanup test also passes in native Termux and in [GitHub checks](https://github.com/Ilkygul/termux-firefox-mediacodec/actions/runs/41343612126).
+The cleanup test deliberately skips PRoot tracing, where stop states differ.
+It opens no browser.
+
+The NV12 layout regression check compiles against the actual upstream plane
+metadata, noncopyable owning subclass and CheckedInt declarations. It checks
+valid and malformed shared-UV layouts; this is a C++ source check, not a claim
+about FFmpeg ABI compatibility or real decoded frames. It caught the distinction
+between copying `YCbCrBuffer` metadata and copying the owning `QuantizableBuffer`.
+
+The [cross-build](https://github.com/Ilkygul/termux-firefox-mediacodec/actions/runs/41340203512)
+and the native phone build are still in progress. FFmpeg 9.0.2-1 was downloaded
+and statically inspected for ABI aliases and NDK decoder markers, but not installed.
+No Firefox 159 browser playback trials have been run. All browser and performance
+results in the remaining sections are historical Firefox 158 results.
+
 The evidence files are sanitized exports of real development/deployment receipts. `publication.source_receipt_sha256` identifies each original private receipt; `evidence/index.json` fingerprints the public exports. Session payloads, raw log tails, profile paths and unrelated desktop hashes were removed. Paths are placeholders, not executable locations.
 
 ## Original native build and source validation
