@@ -2,23 +2,41 @@
 
 ## Firefox 159 candidate status
 
-The 159.0 source port is pinned in `sources.json`; it is not yet an installed or
-runtime-approved browser. The 22 existing host checks pass. A new process-group
-cleanup test also passes in native Termux and in [GitHub checks](https://github.com/Ilkygul/termux-firefox-mediacodec/actions/runs/41343612126).
-The cleanup test deliberately skips PRoot tracing, where stop states differ.
-It opens no browser.
+The 159.0 source port is pinned in `sources.json`. It is built, but not yet
+installed or approved for hardware playback. The 22 existing host checks pass;
+two real process-group tests also pass in native Termux. Those two tests skip
+PRoot tracing, where signal-stop states differ, and open no browser.
 
-The NV12 layout regression check compiles against the actual upstream plane
-metadata, noncopyable owning subclass and CheckedInt declarations. It checks
-valid and malformed shared-UV layouts; this is a C++ source check, not a claim
-about FFmpeg ABI compatibility or real decoded frames. It caught the distinction
-between copying `YCbCrBuffer` metadata and copying the owning `QuantizableBuffer`.
+The NV12 regression check compiles against the actual upstream plane metadata,
+noncopyable owning subclass and CheckedInt declarations. It checks valid and
+malformed shared-UV layouts. The successful cross-build log records that gate
+passing; it is not an FFmpeg ABI or decoded-frame certification.
 
 The [cross-build](https://github.com/Ilkygul/termux-firefox-mediacodec/actions/runs/41340203512)
-and the native phone build are still in progress. FFmpeg 9.0.2-1 was downloaded
-and statically inspected for ABI aliases and NDK decoder markers, but not installed.
-No Firefox 159 browser playback trials have been run. All browser and performance
-results in the remaining sections are historical Firefox 158 results.
+succeeded at commit `77d91f17f350b35003ece0deb2f5341596a5e167`, using the pinned
+Termux recipe and container. Its artifact archive matched GitHub's SHA256 digest
+`fc45a2be7b481393011b7bfc591dfd0aae8409f709869a3f1168bb414d8ecbce`.
+The raw Firefox package SHA256 is
+`9107afe483fe0052d8cb71f277f518fd9df9c9b1e21ea11c7632107a602ec7f6`.
+
+The extracted AArch64 Firefox executable returned `Mozilla Firefox 159.0` with
+exit 0 in native Termux, without opening a browser window. FFmpeg 9.0.2-1 was
+staged separately: its complete program starts, `RTLD_NOW` library loading passes,
+and H.264/VP9 MediaCodec decoders are registered. This proves loading and
+registration, not actual hardware-decoded output.
+
+The phone build completed its optimized Rust phase. Its incremental C++ phase
+was resumed with six jobs, all eight CPUs eligible and normal CPU priority.
+The existing build ID was retained, avoiding a timestamp-triggered Rust rebuild.
+That duplicate build was stopped deliberately after the cross-built package
+passed provenance, ELF and native version checks; it is not reported as another
+completed native Firefox build.
+
+A local `159.0-0+fold1` deployment package preserves the existing device policies
+and both cross-built binary hashes. It is not redistributed with private device
+configuration. Installation and Firefox 159 video validation remain pending.
+No candidate browser playback trials have been run. All browser and performance
+results below belong to Firefox 158.
 
 The evidence files are sanitized exports of real development/deployment receipts. `publication.source_receipt_sha256` identifies each original private receipt; `evidence/index.json` fingerprints the public exports. Session payloads, raw log tails, profile paths and unrelated desktop hashes were removed. Paths are placeholders, not executable locations.
 

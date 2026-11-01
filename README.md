@@ -1,5 +1,5 @@
 > Candidate branch: Firefox 159.0 / FFmpeg 9 source port. The phone still uses the
-> validated Firefox 158 build. Candidate code/configure checks are not hardware
+> validated Firefox 158 build. The cross-build and native version check passed; they are not hardware
 > playback certification; no candidate browser has been approved or installed.
 
 # Native Firefox MediaCodec for Termux

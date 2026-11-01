@@ -38,7 +38,7 @@ def main():
  config=source/'media/ffvpx/config_unix_aarch64.h';config.write_text(re.sub(r'(?m)^(#define (?:CONFIG_LINUX_PERF|HAVE_SYSCTL) )1$',r'\g<1>0',config.read_text()))
  if args.native:
   crate=source/'third_party/rust/glslopt';checksums=crate/'.cargo-checksum.json';values=json.loads(checksums.read_text());name='glsl-optimizer/src/util/os_misc.c';values['files'][name]=digest(crate/name);checksums.write_text(json.dumps(values,separators=(',',':')))
-  for name in ['native-build-env.py','native-stage.py','native-mozconfig.cfg']:
+  for name in ['native-build-env.py','native-stage.py','native-build.sh','native-mozconfig.cfg']:
    text=(ROOT/'scripts'/name).read_text().replace('/data/data/com.termux/files/usr',str(prefix));(work/name).write_text(text)
   (source/'.mozconfig').write_text((work/'native-mozconfig.cfg').read_text().replace('@BUILD_ROOT@',str(work)))
   tools=work/'native-build-tools/bin';tools.mkdir(parents=True,exist_ok=True)
