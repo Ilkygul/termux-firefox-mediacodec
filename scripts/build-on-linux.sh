@@ -30,9 +30,10 @@ else
   cp -- "$source_dir/../patches/firefox/$patch" "$target"
  done
 fi
-# A build-host-only port selects ThinLTO; no phone runtime behavior changes.
+# Match build-host optimization settings in both stages; only patched gets
+# runtime feature patches and the layout regression check.
+cp -- "$source_dir/../patches/native-host/native-host-rust-thin-lto.patch" "$work/x11-packages/firefox/1000-build-host-thin-lto.patch"
 if [[ "$stage" == patched ]]; then
- cp -- "$source_dir/../patches/native-host/native-host-rust-thin-lto.patch" "$work/x11-packages/firefox/1000-build-host-thin-lto.patch"
  cp -- "$source_dir/check_plane_layout.py" "$work/x11-packages/firefox/fold-check-plane-layout.py"
  python3 - "$work/x11-packages/firefox/build.sh" <<'PATCH_RECIPE'
 from pathlib import Path
@@ -63,7 +64,7 @@ fi
  if [[ "$stage" == patched ]]; then
   ./scripts/run-docker.sh bash -lc 'export FOLD_NATIVE_RUST_LTO=thin CARGO_BUILD_JOBS="$1"; ./build-package.sh "-j$1" -a aarch64 -I -f firefox' fold-firefox-build "$jobs"
  else
-  ./scripts/run-docker.sh bash -lc 'export CARGO_BUILD_JOBS="$1"; ./build-package.sh "-j$1" -a aarch64 -I firefox' fold-firefox-build "$jobs"
+  ./scripts/run-docker.sh bash -lc 'export FOLD_NATIVE_RUST_LTO=thin CARGO_BUILD_JOBS="$1"; ./build-package.sh "-j$1" -a aarch64 -I firefox' fold-firefox-build "$jobs"
  fi
 )
 mkdir -p -- "$work/output/fold-build-evidence"
