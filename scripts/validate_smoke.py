@@ -81,7 +81,12 @@ def main():
     started = time.monotonic()
     deadline = started + 112 - args.prior_seconds  # Reserve the final eight seconds for cleanup/hash checks.
     before = {name: fingerprint(binary.parent / name) for name in ('firefox', 'libxul.so')}
-    codec_before = {name: fingerprint(codecs / name) for name in ('libavcodec.so.63', 'libavutil.so.61', 'libbinder_ndk.so')}
+    binder = binary.parent / 'native-system/libbinder_ndk.so'
+    if not binder.is_file():
+        binder = codecs / 'libbinder_ndk.so'
+    codec_paths = {name: codecs / name for name in ('libavcodec.so.63', 'libavutil.so.61')}
+    codec_paths['libbinder_ndk.so'] = binder
+    codec_before = {name: fingerprint(path) for name, path in codec_paths.items()}
     summary = {'protocol': 'maintenance-smoke-v1', 'stage': 'patched', 'complete': False,
                'deadline_enforced': True, 'budget_seconds': 120, 'prior_test_seconds': args.prior_seconds, 'cases': [],
                'system_binder': fingerprint(Path('/system/lib64/libbinder_ndk.so')),
@@ -144,7 +149,7 @@ def main():
     summary['artifacts_unchanged'] = before == {
         name: fingerprint(binary.parent / name) for name in ('firefox', 'libxul.so')}
     summary['codecs_unchanged'] = codec_before == {
-        name: fingerprint(codecs / name) for name in ('libavcodec.so.63', 'libavutil.so.61', 'libbinder_ndk.so')}
+        name: fingerprint(path) for name, path in codec_paths.items()}
     summary['elapsed_seconds'] = time.monotonic() - started
     summary['total_test_seconds'] = summary['elapsed_seconds'] + args.prior_seconds
     summary['complete'] = (len(summary['cases']) == len(CASES)

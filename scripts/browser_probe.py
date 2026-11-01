@@ -82,7 +82,10 @@ def ticks(root):
   n=len(ids);ids.update(k for k,v in all.items() if v[0] in ids)
   if len(ids)==n:break
  return {pid:all[pid][1] for pid in ids if pid in all}
-native=True;firefox=Path(os.environ.get('PROBE_FIREFOX_EXE',str(P/'bin/firefox')))
+native=True;firefox=Path(os.environ.get('PROBE_FIREFOX_EXE',str(P/'lib/firefox/firefox')))
+private_runtime=firefox.resolve().parent/'native-system'
+if (private_runtime/'libbinder_ndk.so').is_file():
+ ENV['LD_LIBRARY_PATH']=str(private_runtime)+':'+ENV.get('LD_LIBRARY_PATH',str(P/'lib'))
 media=os.environ.get('PROBE_MEDIA','h264.mp4');order=os.environ.get('PROBE_ORDER','software,hardware').split(',')
 rows=[]
 try:

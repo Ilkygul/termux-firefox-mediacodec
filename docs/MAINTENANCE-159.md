@@ -49,6 +49,14 @@ This is not the full 14-case matrix, a 4K/10-bit/streaming qualification, a long
 stability test or a new performance/battery benchmark. Historical Firefox 158
 measurements are retained separately.
 
+Run the bounded check with the actual ELF and a directory containing the staged
+FFmpeg libraries. The runner selects the Binder bridge beside the Firefox ELF:
+
+```sh
+python scripts/validate_smoke.py --binary /absolute/stage/lib/firefox/firefox \
+  --codec-dir /absolute/stage/lib --work .work/smoke
+```
+
 The explicit approval route is:
 
 ```sh
