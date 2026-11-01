@@ -1,3 +1,7 @@
+> Candidate branch: Firefox 159.0 / FFmpeg 9 source port. The phone still uses the
+> validated Firefox 158 build. Candidate code/configure checks are not hardware
+> playback certification; no candidate browser has been approved or installed.
+
 # Native Firefox MediaCodec for Termux
 
 H.264 and VP9 hardware video decoding in the **native GTK/X11 Termux build of Firefox**, through system FFmpeg and Android's MediaCodec NDK API. The browser runs directly on Android/Bionic: no PRoot browser, codec proxy, extra decoding daemon, or emulated desktop architecture.

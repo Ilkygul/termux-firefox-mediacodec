@@ -1,0 +1,9 @@
+{
+  "upstream_buffer_bounds_checks": true,
+  "nv12_shared_chroma_valid": true,
+  "truncated_or_missing_buffers_rejected": true,
+  "negative_stride_or_height_rejected": true,
+  "native_thin_lto_opt_in": true,
+  "header_sha256": "7e10f17bf4d3e48038eff70f8faa0d85e9a256cb9c29bee8144bd2fa24b6f480",
+  "not_a_browser_playback_test": true
+}

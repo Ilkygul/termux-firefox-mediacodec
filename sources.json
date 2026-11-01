@@ -1,8 +1,8 @@
 {
-  "firefox_version": "158.0",
-  "termux_revision": "e2b25a170e34052eb30fdb64da0593bc69499ca9",
-  "source_url": "https://archive.mozilla.org/pub/firefox/releases/158.0/source/firefox-158.0.source.tar.xz",
-  "source_sha256": "fc77f7801d7580a600af683cc367e261eb1ec74647e84a91b4a1e3c1dd5aa2bb",
+  "firefox_version": "159.0",
+  "termux_revision": "9020eb6f9c26103fe7c67a6675a0303dc7adaa99",
+  "source_url": "https://archive.mozilla.org/pub/firefox/releases/159.0/source/firefox-159.0.source.tar.xz",
+  "source_sha256": "3d98df785894057fce60603e845828e758a5411ad79aaaaff2b8230597f500d9",
   "termux_patches": [
     {
       "name": "0001-configure-treat-termux-as-linux.patch",
@@ -14,7 +14,7 @@
     },
     {
       "name": "0003-configure-fix-rustflags.patch",
-      "sha256": "b625be3775896ccf3c24a6f9691ccbf5fbe51444bdf8cc5c6c7104e31b61cbef"
+      "sha256": "b778d258bac9f0b8db12859cdae8ccddace93484c414cb47d7a4abecf45938bf"
     },
     {
       "name": "0004-configure-do-not-check-libstdcxx-headers.patch",
@@ -26,7 +26,7 @@
     },
     {
       "name": "0006-configure-do-not-enable-alsa.patch",
-      "sha256": "96520665e7e0de49ca21c448fba622e1718609e174dc4deba276667510951402"
+      "sha256": "ae6749a68dfb6dce497f946c259e512e95b32e9a525c9dc3b222e0482c2a90b5"
     },
     {
       "name": "0007-fix-link-with-libcxx-18.patch",
@@ -54,7 +54,7 @@
     },
     {
       "name": "0013-fix-rust-compile.patch",
-      "sha256": "51dd27fba9138fc23f9555fc420999fbb09b1e27b52c6b4277f1a2aeb3aa90f8"
+      "sha256": "3173af8fe2b227b7a40cfeb93515988da369fd717b96db0796c502cba6d00038"
     },
     {
       "name": "0014-unset-thread-priority-scheduling-macro.patch",
@@ -82,11 +82,11 @@
     },
     {
       "name": "0020-configure-no-pack-relative-relocs.patch",
-      "sha256": "ef7406be739a186c0583752cfd7fc34807cb5944631212647a6b57b0e2cc186a"
+      "sha256": "e26d92b3c887e234423433eb59abfabfdbefa343c3fe81e284f0ddec90c1f2d0"
     },
     {
       "name": "0021-check-if-dlpi_name-is-nullptr-before-using.patch",
-      "sha256": "ad9fedf4881cbb264895442a906c1b3b750c1b8979f751d64ca199a66c375c2a"
+      "sha256": "35d55357bde6c203609efdd02f8fdc507e968488b3ebade1904c0258751e7471"
     },
     {
       "name": "0022-fix-missing-include-for-macro-MOZ_TRY-in-TimeZone.cpp.patch",
@@ -98,11 +98,11 @@
     },
     {
       "name": "0024-webextensions.storage.sync.kinto-true.patch",
-      "sha256": "24cab0a3ce6ae868067705188acf948b04a006c7c65a2154e60d6e3291a3fec0"
+      "sha256": "ad439613ce6c17a0af5e8ace663b7c31ae2d3dd3f56adf98f7456ec4f53c3a96"
     },
     {
       "name": "0025-fix-popup-white-borders.patch",
-      "sha256": "2b7bd8338e2f81448a2e5f4dd7f35683d4015094ddcd45b35dfc6454d3860551"
+      "sha256": "da7a66ec24a2129f16b0ab85a1227bb14398b65ae7a4bfffd050d840dc7fea53"
     },
     {
       "name": "0026-fix-tagged-pointer.patch",
@@ -118,7 +118,7 @@
     },
     {
       "name": "0029-fix-sigbus-2.patch",
-      "sha256": "c79c358be74630362f6a8d7c29cb19915c87fe6ff60af482fdad6c080e6fe571"
+      "sha256": "1a582e59c76559f0cea6f9336cac2d1bad045e6f89a023537ce33debe7e82ebf"
     },
     {
       "name": "0030-tagged-pointer-2.patch",
@@ -126,11 +126,23 @@
     },
     {
       "name": "0031-do-not-use-ioprio-on-android.patch",
-      "sha256": "4b3fa717e6f7936b60c655b6fa69ea67c08b25c7c98e52a11671ed3ab6e97e61"
+      "sha256": "a6270d054c3e9b840c338a08adec424d0aa82b53046f430f54e1938258596b18"
     },
     {
       "name": "0031-fix-build-with-webspeech-disabled.patch",
-      "sha256": "473b07e15a6fa9d197ef136bb9809651420e588b5f85bcfef278f5b3e6f151b4"
+      "sha256": "3c73ceefbf81d67390b16a8f8e84254d69b4559cc96c7b3ac2d012d12df86617"
+    },
+    {
+      "name": "0032-wayland-proxy-no-pthread-cancel.patch",
+      "sha256": "160e6cd88d6878ec79f4268af1b1c669a2e4a786c54b7b04c3baf362982c207c"
+    },
+    {
+      "name": "0033-include-widgetutilsgtk-without-dbus.patch",
+      "sha256": "b8e52fefd14c33eb7e51c6ea2216661fb5d02fa98b63a7de88cddc779f63ab0a"
+    },
+    {
+      "name": "0034-link-wayland-libs-directly.patch",
+      "sha256": "9639d72e2b91921abb462b72983226aa2836fd87415ec493f7000d623a3b488c"
     }
   ],
   "native_host_patches": [
@@ -154,7 +166,7 @@
     },
     {
       "name": "native-host-rust-thin-lto.patch",
-      "sha256": "9a55fd86760c82b705992bab981ce3299325d81febf13dfc64879134cc55855c",
+      "sha256": "e26334c50339d96d41b90975c4051c9b6eb132d99328e0e10496b5500ea758f0",
       "reason": "Full Rust LTO exhausted native Android Scudo mapping memory during gkrust. Select ThinLTO only through the isolated on-device build environment; default official build behavior remains unchanged."
     },
     {
@@ -173,7 +185,7 @@
     },
     {
       "name": "1002-native-mediacodec-prototype.patch",
-      "sha256": "8c35185aec490e38952cf7f14ada452fd30a04ca9dc8ae43d3c40c99e13f9da6"
+      "sha256": "9ead67842964aa5929a028f10c986a3be5570221ae8b40d925f2870c888dc6e4"
     },
     {
       "name": "1003-native-decoder-output-diagnostics.patch",

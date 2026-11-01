@@ -19,7 +19,7 @@
  #  define AV_PIX_FMT_YUVJ420P PIX_FMT_YUVJ420P
  #  define AV_PIX_FMT_YUV420P10LE PIX_FMT_YUV420P10LE
  #  define AV_PIX_FMT_YUV422P PIX_FMT_YUV422P
-@@ -996,6 +1001,7 @@
+@@ -976,6 +981,7 @@
        mTrackingId(std::move(aTrackingId)),
        // Value may be changed later when codec is known after initialization.
        m8BitOutput(a8BitOutput) {
@@ -27,7 +27,7 @@
    FFMPEG_LOG("FFmpegVideoDecoder::FFmpegVideoDecoder MIME {} Codec ID {}",
               aConfig.mMimeType.get(), static_cast<int>(mCodecID));
    // Use a new MediaByteBuffer as the object will be modified during
-@@ -1083,6 +1089,86 @@
+@@ -1063,6 +1069,86 @@
           0 == strncmp(aCodec->name, "vp9", 3);
  }
  
@@ -114,7 +114,7 @@
  RefPtr<MediaDataDecoder::InitPromise> FFmpegVideoDecoder<LIBAV_VER>::Init() {
    AUTO_PROFILER_LABEL("FFmpegVideoDecoder::Init", MEDIA_PLAYBACK);
    FFMPEG_LOG("FFmpegVideoDecoder, init, IsHardwareAccelerated={}\n",
-@@ -1091,7 +1177,17 @@
+@@ -1071,7 +1157,17 @@
    if (IsHardwareAccelerated()) {
      return InitPromise::CreateAndResolve(TrackInfo::kVideoTrack, __func__);
    }
@@ -133,7 +133,7 @@
    if (NS_FAILED(rv)) {
      return InitPromise::CreateAndReject(rv, __func__);
    }
-@@ -1472,6 +1568,14 @@
+@@ -1457,6 +1553,14 @@
  #endif
  
  void FFmpegVideoDecoder<LIBAV_VER>::InitCodecContext() {
@@ -148,7 +148,7 @@
    mCodecContext->width = mInfo.mImage.width;
    mCodecContext->height = mInfo.mImage.height;
  
-@@ -1747,7 +1851,7 @@
+@@ -1730,7 +1834,7 @@
  
      MediaResult rv;
  #  ifdef MOZ_USE_HWDECODE
@@ -157,7 +157,7 @@
  #    ifdef MOZ_WIDGET_GTK
        mDecodeStats.UpdateDecodeTimes(Duration(mFrame));
        if (mDecodeStats.IsDecodingSlow() &&
-@@ -1958,6 +2062,7 @@
+@@ -1938,6 +2042,7 @@
  gfx::ColorDepth FFmpegVideoDecoder<LIBAV_VER>::GetColorDepth(
      const AVPixelFormat& aFormat) const {
    switch (aFormat) {
@@ -165,7 +165,7 @@
      case AV_PIX_FMT_YUV420P:
      case AV_PIX_FMT_YUVJ420P:
      case AV_PIX_FMT_YUV422P:
-@@ -2076,6 +2181,12 @@
+@@ -2056,6 +2161,12 @@
    FFMPEG_LOG("Got one frame output with pts={} dts={} duration={}", aPts,
               mFrame->pkt_dts, aDuration);
  
@@ -178,7 +178,7 @@
    VideoData::QuantizableBuffer b;
    b.mPlanes[0].mData = mFrame->data[0];
    b.mPlanes[1].mData = mFrame->data[1];
-@@ -2091,8 +2202,23 @@
+@@ -2071,10 +2182,32 @@
  
    b.mPlanes[0].mWidth = mFrame->width;
    b.mPlanes[0].mHeight = mFrame->height;
@@ -201,10 +201,20 @@
 +    b.mPlanes[2].mStride = mFrame->linesize[1];
 +    b.mPlanes[1].mSkip = b.mPlanes[2].mSkip = 1;
 +  }
-   b.mYUVColorSpace = GetFrameColorSpace();
-   b.mColorPrimaries = GetFrameColorPrimaries();
-   b.mColorRange = GetFrameColorRange();
-@@ -2693,6 +2819,9 @@
+ #if LIBAVCODEC_VERSION_MAJOR >= 58
+-  if (!FramePlanesFitBackingBuffers(mFrame, b)) {
++  // NV12 chroma shares one interleaved allocation. Validate that entire
++  // allocation at its original start; the V samples begin one byte later and
++  // do not consume a full extra stride beyond the final UV row.
++  auto boundsBuffer = b;
++  if (isNV12) {
++    boundsBuffer.mPlanes[2].mData = boundsBuffer.mPlanes[1].mData;
++  }
++  if (!FramePlanesFitBackingBuffers(mFrame, boundsBuffer)) {
+     FFMPEG_LOG(
+         "Decoded frame plane layout does not match its buffers: format {} "
+         "{}x{}, Y {}x{} stride {}, CbCr {}x{} stride {}, buffer sizes {} {} {}",
+@@ -2687,6 +2820,9 @@
  
  bool FFmpegVideoDecoder<LIBAV_VER>::IsHardwareAccelerated(
      nsACString& aFailureReason) const {

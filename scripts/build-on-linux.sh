@@ -11,7 +11,7 @@ command -v docker >/dev/null
 command -v git >/dev/null
 docker info >/dev/null
 source_dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
-revision=e2b25a170e34052eb30fdb64da0593bc69499ca9
+revision=9020eb6f9c26103fe7c67a6675a0303dc7adaa99
 if [[ ! -e "$work" ]]; then
  git clone --depth=1 --filter=blob:none --no-checkout https://github.com/termux/termux-packages.git "$work"
  git -C "$work" fetch --depth=1 origin "$revision"
@@ -27,6 +27,10 @@ else
   [[ ! -e "$target" ]] || cmp -- "$source_dir/../patches/firefox/$patch" "$target"
   cp -- "$source_dir/../patches/firefox/$patch" "$target"
  done
+fi
+# A build-host-only port selects ThinLTO; no phone runtime behavior changes.
+if [[ "$stage" == patched ]]; then
+ cp -- "$source_dir/../patches/native-host/native-host-rust-thin-lto.patch" "$work/x11-packages/firefox/1000-build-host-thin-lto.patch"
 fi
 container_name="${FOLD_FIREFOX_BUILD_CONTAINER:-fold-firefox-builder}"
 image=ghcr.io/termux/package-builder@sha256:44999857244619e25bc8e3427904a16d36cc0c0e087704af039e5bdf94814ac9
@@ -44,7 +48,11 @@ fi
  export TERMUX_BUILDER_IMAGE_NAME=ghcr.io/termux/package-builder@sha256:44999857244619e25bc8e3427904a16d36cc0c0e087704af039e5bdf94814ac9
  extra=()
  [[ "$stage" != patched ]] || extra=(-f)
- ./scripts/run-docker.sh ./build-package.sh -a aarch64 -I "${extra[@]}" firefox
+ if [[ "$stage" == patched ]]; then
+  ./scripts/run-docker.sh bash -lc 'export FOLD_NATIVE_RUST_LTO=thin CARGO_BUILD_JOBS=2; ./build-package.sh -a aarch64 -I -f firefox'
+ else
+  ./scripts/run-docker.sh ./build-package.sh -a aarch64 -I firefox
+ fi
 )
 mkdir -p -- "$work/output/fold-build-evidence"
 docker image inspect ghcr.io/termux/package-builder@sha256:44999857244619e25bc8e3427904a16d36cc0c0e087704af039e5bdf94814ac9 > "$work/output/fold-build-evidence/builder-image.json"

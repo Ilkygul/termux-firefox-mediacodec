@@ -19,6 +19,19 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
           persist-credentials: false
+      - name: Reserve disk for the Firefox build on this disposable runner
+        run: |
+          sudo python3 - <<'PYTHON'
+          import shutil
+          from pathlib import Path
+          # Only unused preinstalled SDKs on the ephemeral hosted runner.
+          for directory in ['/usr/share/dotnet', '/usr/local/lib/android', '/opt/ghc', '/opt/hostedtoolcache']:
+              path = Path(directory)
+              if path.exists():
+                  shutil.rmtree(path)
+          PYTHON
+          df -h /
+        shell: bash
       - name: Official pinned Termux cross-build
         run: bash scripts/build-on-linux.sh "$BUILD_STAGE" "$PWD/.work/cross"
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
