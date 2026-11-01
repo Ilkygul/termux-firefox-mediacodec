@@ -1,0 +1,25 @@
+{
+  "upstream_revision": "18e1ade601f424b7b2690607c50f5ca1fc6de0de",
+  "upstream_license": "NCSA",
+  "sources": [
+    {
+      "name": "libbinder_ndk-wrapper.c",
+      "url": "https://raw.githubusercontent.com/termux/termux-packages/18e1ade601f424b7b2690607c50f5ca1fc6de0de/packages/libandroid-stub/libbinder_ndk-wrapper.c",
+      "sha256": "ba2d479d4cae8011457488005de730dbcb29b8f9909ffa0d0a8f9edfea17e0ca"
+    },
+    {
+      "name": "platform-ns.h",
+      "url": "https://raw.githubusercontent.com/termux/termux-packages/18e1ade601f424b7b2690607c50f5ca1fc6de0de/packages/libandroid-stub/platform-ns.h",
+      "sha256": "6ab8b59f6ae8c75dceabd46ad8e36e6cc008df237d50f8cf09db3e6a7e7cc0cf"
+    }
+  ],
+  "patch": "patches/native-runtime/0001-complete-binder-parcel-forwarding.patch",
+  "patch_sha256": "a2447accaef2950d9075e04ddd7648332181dc2fc5e9998c68b5c20814bb8506",
+  "required_exports": [
+    "AParcel_readStrongBinder",
+    "AParcel_writeStrongBinder",
+    "AIBinder_Class_setHandleShellCommand",
+    "AIBinder_Class_setTransactionCodeToFunctionNameMap",
+    "AIBinder_markVintfStability"
+  ]
+}

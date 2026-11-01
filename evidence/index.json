@@ -57,6 +57,10 @@
     {
       "file": "update-guard-native-apt.json",
       "sha256": "bfcd052e4c7d655bac9f703afb39d8a9d53216d7dfae50458fb9cd6895a24f1b"
+    },
+    {
+      "file": "maintenance-159.json",
+      "sha256": "3e4d0b1e76c410420032745e4937b5a0465f0efeb0bfee2f0e7d1ee0e5ed6135"
     }
   ]
 }

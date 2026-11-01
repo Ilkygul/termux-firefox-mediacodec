@@ -90,6 +90,64 @@ class GuardTests(unittest.TestCase):
     def test_full_validation_approves_exact_payload_directly(self):
         path,_=self.full_validation();self.policy['approved_firefox']=[];self.manifest.write_text(json.dumps(self.policy));self.guard.approve(self.browser,path,None)
         self.assertEqual(self.guard.policy()['approved_firefox'][0]['package_sha256'],g.digest(self.browser))
+    def smoke_validation(self):
+        import copy, hashlib
+        path, value = self.full_validation()
+        codec = b'synthetic h264_mediacodec vp9_mediacodec ndk_codec'
+        util = b'synthetic util'; bridge = b'synthetic forwarding bridge'
+        browser = self.package('firefox', '2.0+smoke', {
+            'lib/firefox/firefox': b'test executable', 'lib/firefox/libxul.so': b'test library',
+            'bin/firefox': b'synthetic launcher', 'lib/firefox/native-system/libbinder_ndk.so': bridge})
+        package = self.package('ffmpeg', '9.0', {'lib/libavcodec.so.63': codec, 'lib/libavutil.so.61': util})
+        value.update(protocol='maintenance-smoke-v1', deadline_enforced=True, budget_seconds=120,
+                     total_test_seconds=60, codecs_unchanged=True)
+        value['cases'] = [c for c in value['cases'] if c['name'] in g.SMOKE_CASES]
+        for case in value['cases']:
+            row = copy.deepcopy(case['rows'][1]); case['rows'] = [row]
+            row['loaded_decoder_libraries'] = [str(self.prefix / 'lib/libavcodec.so.63')]
+            case['expected_codec_loaded'] = True
+            if case['name'] in ('av1-fallback', 'hardware-disabled'):
+                row.update(output_hardware_decoder=False, hardware_decoder_names=[])
+            if case['name'] == 'hardware-disabled': row['hardware_disabled_by_pref'] = True
+        value['codec_fingerprints'] = {
+            name: {'path': str(self.prefix / relative), 'sha256': hashlib.sha256(data).hexdigest()}
+            for name, relative, data in [
+                ('libavcodec.so.63', 'lib/libavcodec.so.63', codec),
+                ('libavutil.so.61', 'lib/libavutil.so.61', util),
+                ('libbinder_ndk.so', 'lib/firefox/native-system/libbinder_ndk.so', bridge)]}
+        path.write_text(json.dumps(value)); return browser, package, path, value
+    def test_smoke_requires_explicit_scope_opt_in(self):
+        browser, codec, path, _ = self.smoke_validation()
+        with self.assertRaisesRegex(g.GuardError, 'explicit'):
+            self.guard.approve(browser, path, None, codec_package=codec)
+    def test_smoke_approves_exact_browser_codec_and_runtime_payloads(self):
+        browser, codec, path, _ = self.smoke_validation()
+        self.guard.approve(browser, path, None, allow_smoke=True, codec_package=codec)
+        entry = self.guard.policy()['approved_firefox'][-1]
+        self.assertEqual(entry['validation_protocol'], 'maintenance-smoke-v1')
+        self.assertEqual(entry['validated_ffmpeg_package_sha256'], g.digest(codec))
+        self.assertEqual(set(entry['runtime_files']), {'bin/firefox', 'lib/firefox/native-system/libbinder_ndk.so'})
+    def test_smoke_rejects_exceeded_time_budget(self):
+        browser, codec, path, value = self.smoke_validation()
+        value['total_test_seconds'] = 120.1; path.write_text(json.dumps(value))
+        with self.assertRaisesRegex(g.GuardError, 'two-minute'):
+            self.guard.approve(browser, path, None, allow_smoke=True, codec_package=codec)
+    def test_smoke_rejects_missing_functional_case(self):
+        browser, codec, path, value = self.smoke_validation()
+        value['cases'].pop(); path.write_text(json.dumps(value))
+        with self.assertRaisesRegex(g.GuardError, 'four maintenance'):
+            self.guard.approve(browser, path, None, allow_smoke=True, codec_package=codec)
+    def test_smoke_rejects_a_different_codec_package(self):
+        browser, _, path, _ = self.smoke_validation()
+        wrong = self.package('ffmpeg', '9.1', {'lib/libavcodec.so.63': b'changed', 'lib/libavutil.so.61': b'changed'})
+        with self.assertRaisesRegex(g.GuardError, 'tested codec payload'):
+            self.guard.approve(browser, path, None, allow_smoke=True, codec_package=wrong)
+    def test_smoke_rejects_an_unverified_binder_bridge(self):
+        browser, codec, path, value = self.smoke_validation()
+        value['codec_fingerprints']['libbinder_ndk.so']['sha256'] = '0' * 64
+        path.write_text(json.dumps(value))
+        with self.assertRaisesRegex(g.GuardError, 'tested Binder bridge'):
+            self.guard.approve(browser, path, None, allow_smoke=True, codec_package=codec)
     def test_wrong_validated_binary_cannot_be_approved(self):
         path,value=self.full_validation();value['artifact_fingerprints']['libxul.so']['sha256']='0'*64;path.write_text(json.dumps(value))
         with self.assertRaisesRegex(g.GuardError,'not the validated artifact'):self.guard.approve(self.browser,path,None)

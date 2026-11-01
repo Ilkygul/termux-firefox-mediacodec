@@ -63,3 +63,11 @@ Added source/patch provenance, an upstream-change monitor, manual cross-build wo
 ## What was not claimed
 
 No universal fastest-browser result, all-codec hardware coverage, zero-copy rendering, measured battery saving, total-device memory reduction, audible A/V synchronization, physical Fold/DeX certification or upstream endorsement. Keeping an old Firefox forever is not update protection: a newer security release requires prompt porting/testing or an explicit temporary software-decoding choice.
+
+
+## Firefox 159 maintenance
+
+The source port, successful cross-build, browser-private Binder correction,
+user-selected two-minute smoke validation and paired FFmpeg 9 deployment are
+recorded in [the maintenance result](MAINTENANCE-159.md). This update does not
+reuse the original Firefox 158 results as Firefox 159 certification.

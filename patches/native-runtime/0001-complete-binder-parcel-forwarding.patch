@@ -1,0 +1,38 @@
+--- a/libbinder_ndk-wrapper.c
++++ b/libbinder_ndk-wrapper.c
+@@ -28,7 +28,12 @@
+ bool AIBinder_associateClass(AIBinder *binder, const AIBinder_Class *clazz);
+ AIBinder *AServiceManager_getService(const char *instance);
+ 
+-#define FUNCTIONS(f)     f(ABinderProcess_startThreadPool)     f(ABinderProcess_setThreadPoolMaxThreadCount)     f(ABinderProcess_isThreadPoolStarted)     f(ABinderProcess_joinThreadPool)     f(ABinderProcess_setupPolling)     f(ABinderProcess_handlePolledCommands)     f(AIBinder_Class_define)     f(AIBinder_associateClass)     f(AIBinder_Class_setOnDump)     f(AIBinder_Class_disableInterfaceTokenHeader)     f(AIBinder_new)     f(AIBinder_isRemote)     f(AIBinder_isAlive)     f(AIBinder_ping)     f(AIBinder_dump)     f(AIBinder_linkToDeath)     f(AIBinder_unlinkToDeath)     f(AIBinder_getCallingUid)     f(AIBinder_getCallingPid)     f(AIBinder_incStrong)     f(AIBinder_decStrong)     f(AIBinder_debugGetRefCount)     f(AIBinder_getUserData)     f(AIBinder_prepareTransaction)     f(AIBinder_transact)     f(AIBinder_Weak_new)     f(AIBinder_Weak_delete)     f(AIBinder_Weak_promote)     f(AIBinder_DeathRecipient_new)     f(AIBinder_DeathRecipient_delete)     f(AIBinder_Class_getDescriptor)     f(AServiceManager_getService)     f(AStatus_newOk)     f(AStatus_fromExceptionCode)     f(AStatus_fromExceptionCodeWithMessage)     f(AStatus_fromServiceSpecificError)     f(AStatus_fromServiceSpecificErrorWithMessage)     f(AStatus_fromStatus)     f(AStatus_isOk)     f(AStatus_getExceptionCode)     f(AStatus_getServiceSpecificError)     f(AStatus_getStatus)     f(AStatus_getMessage)     f(AStatus_getDescription)     f(AStatus_deleteDescription)     f(AStatus_delete)     f(AParcel_delete)     f(AParcel_setDataPosition)     f(AParcel_getDataPosition)     f(AParcel_writeParcelFileDescriptor)     f(AParcel_readParcelFileDescriptor)     f(AParcel_writeStatusHeader)     f(AParcel_readStatusHeader)     f(AParcel_writeString)     f(AParcel_readString)     f(AParcel_writeStringArray)     f(AParcel_readStringArray)     f(AParcel_writeParcelableArray)     f(AParcel_readParcelableArray)     f(AParcel_writeInt32)     f(AParcel_writeUint32)     f(AParcel_writeInt64)     f(AParcel_writeUint64)     f(AParcel_writeFloat)     f(AParcel_writeDouble)     f(AParcel_writeBool)     f(AParcel_writeChar)     f(AParcel_writeByte)     f(AParcel_readInt32)     f(AParcel_readUint32)     f(AParcel_readInt64)     f(AParcel_readUint64)     f(AParcel_readFloat)     f(AParcel_readDouble)     f(AParcel_readBool)     f(AParcel_readChar)     f(AParcel_readByte)     f(AParcel_writeInt32Array)     f(AParcel_writeUint32Array)     f(AParcel_writeInt64Array)     f(AParcel_writeUint64Array)     f(AParcel_writeFloatArray)     f(AParcel_writeDoubleArray)     f(AParcel_writeBoolArray)     f(AParcel_writeCharArray)     f(AParcel_writeByteArray)     f(AParcel_readInt32Array)     f(AParcel_readUint32Array)     f(AParcel_readInt64Array)     f(AParcel_readUint64Array)     f(AParcel_readFloatArray)     f(AParcel_readDoubleArray)     f(AParcel_readBoolArray)     f(AParcel_readCharArray)     f(AParcel_readByteArray)
++// Platform declarations matching the Android NDK Binder platform headers.
++typedef binder_status_t (*AIBinder_handleShellCommand)(AIBinder*, int, int, int, const char**, uint32_t);
++void AIBinder_Class_setHandleShellCommand(AIBinder_Class*, AIBinder_handleShellCommand);
++void AIBinder_markVintfStability(AIBinder*);
++
++#define FUNCTIONS(f)     f(ABinderProcess_startThreadPool)     f(ABinderProcess_setThreadPoolMaxThreadCount)     f(ABinderProcess_isThreadPoolStarted)     f(ABinderProcess_joinThreadPool)     f(ABinderProcess_setupPolling)     f(ABinderProcess_handlePolledCommands)     f(AIBinder_Class_define)     f(AIBinder_associateClass)     f(AIBinder_Class_setOnDump)     f(AIBinder_Class_disableInterfaceTokenHeader)     f(AIBinder_new)     f(AIBinder_isRemote)     f(AIBinder_isAlive)     f(AIBinder_ping)     f(AIBinder_dump)     f(AIBinder_linkToDeath)     f(AIBinder_unlinkToDeath)     f(AIBinder_getCallingUid)     f(AIBinder_getCallingPid)     f(AIBinder_incStrong)     f(AIBinder_decStrong)     f(AIBinder_debugGetRefCount)     f(AIBinder_getUserData)     f(AIBinder_prepareTransaction)     f(AIBinder_transact)     f(AIBinder_Weak_new)     f(AIBinder_Weak_delete)     f(AIBinder_Weak_promote)     f(AIBinder_DeathRecipient_new)     f(AIBinder_DeathRecipient_delete)     f(AIBinder_Class_getDescriptor)     f(AServiceManager_getService)     f(AStatus_newOk)     f(AStatus_fromExceptionCode)     f(AStatus_fromExceptionCodeWithMessage)     f(AStatus_fromServiceSpecificError)     f(AStatus_fromServiceSpecificErrorWithMessage)     f(AStatus_fromStatus)     f(AStatus_isOk)     f(AStatus_getExceptionCode)     f(AStatus_getServiceSpecificError)     f(AStatus_getStatus)     f(AStatus_getMessage)     f(AStatus_getDescription)     f(AStatus_deleteDescription)     f(AStatus_delete)     f(AIBinder_Class_setHandleShellCommand) f(AIBinder_Class_setTransactionCodeToFunctionNameMap) f(AIBinder_markVintfStability) f(AParcel_readStrongBinder) f(AParcel_writeStrongBinder) f(AParcel_delete)     f(AParcel_setDataPosition)     f(AParcel_getDataPosition)     f(AParcel_writeParcelFileDescriptor)     f(AParcel_readParcelFileDescriptor)     f(AParcel_writeStatusHeader)     f(AParcel_readStatusHeader)     f(AParcel_writeString)     f(AParcel_readString)     f(AParcel_writeStringArray)     f(AParcel_readStringArray)     f(AParcel_writeParcelableArray)     f(AParcel_readParcelableArray)     f(AParcel_writeInt32)     f(AParcel_writeUint32)     f(AParcel_writeInt64)     f(AParcel_writeUint64)     f(AParcel_writeFloat)     f(AParcel_writeDouble)     f(AParcel_writeBool)     f(AParcel_writeChar)     f(AParcel_writeByte)     f(AParcel_readInt32)     f(AParcel_readUint32)     f(AParcel_readInt64)     f(AParcel_readUint64)     f(AParcel_readFloat)     f(AParcel_readDouble)     f(AParcel_readBool)     f(AParcel_readChar)     f(AParcel_readByte)     f(AParcel_writeInt32Array)     f(AParcel_writeUint32Array)     f(AParcel_writeInt64Array)     f(AParcel_writeUint64Array)     f(AParcel_writeFloatArray)     f(AParcel_writeDoubleArray)     f(AParcel_writeBoolArray)     f(AParcel_writeCharArray)     f(AParcel_writeByteArray)     f(AParcel_readInt32Array)     f(AParcel_readUint32Array)     f(AParcel_readInt64Array)     f(AParcel_readUint64Array)     f(AParcel_readFloatArray)     f(AParcel_readDoubleArray)     f(AParcel_readBoolArray)     f(AParcel_readCharArray)     f(AParcel_readByteArray)
+ 
+ #define STUB(s) __typeof__(s)* s;
+ static struct {
+@@ -451,3 +456,21 @@
+ binder_status_t AParcel_readByteArray(const AParcel* parcel, void* arrayData, AParcel_byteArrayAllocator allocator) {
+     CALL(AParcel_readByteArray, STATUS_UNKNOWN_ERROR, parcel, arrayData, allocator);
+ }
++
++// Android vendor allocator clients require these core Binder parcel functions.
++binder_status_t AParcel_writeStrongBinder(AParcel* parcel, AIBinder* binder) {
++    CALL(AParcel_writeStrongBinder, STATUS_UNKNOWN_ERROR, parcel, binder);
++}
++binder_status_t AParcel_readStrongBinder(const AParcel* parcel, AIBinder** binder) {
++    CALL(AParcel_readStrongBinder, STATUS_UNKNOWN_ERROR, parcel, binder);
++}
++
++void AIBinder_Class_setHandleShellCommand(AIBinder_Class* clazz, AIBinder_handleShellCommand callback) {
++    CALL_VOID(AIBinder_Class_setHandleShellCommand, clazz, callback);
++}
++void AIBinder_Class_setTransactionCodeToFunctionNameMap(AIBinder_Class* clazz, const char* const* names, size_t length) {
++    CALL_VOID(AIBinder_Class_setTransactionCodeToFunctionNameMap, clazz, names, length);
++}
++void AIBinder_markVintfStability(AIBinder* binder) {
++    CALL_VOID(AIBinder_markVintfStability, binder);
++}

@@ -36,6 +36,11 @@ if not Path(sys.executable).resolve().is_relative_to(P):raise SystemExit('Use na
 if next(l.split(':',1)[1].strip() for l in Path('/proc/self/status').read_text().splitlines() if l.startswith('TracerPid:'))!='0':raise SystemExit('Run outside PRoot/tracing.')
 ENV=os.environ.copy()
 for k in ['LD_PRELOAD','LD_LIBRARY_PATH']:ENV.pop(k,None)
+codec_dir=os.environ.get('FOLD_TEST_CODEC_DIR')
+if codec_dir:
+ codec_path=Path(codec_dir).resolve()
+ if not codec_path.is_dir():raise SystemExit('Missing staged codec directory')
+ ENV['LD_LIBRARY_PATH']=str(codec_path)+':'+str(P/'lib')
 ENV.update(DISPLAY=':0',GDK_BACKEND='x11',GALLIUM_DRIVER='zink',MESA_LOADER_DRIVER_OVERRIDE='zink',ZINK_DESCRIPTORS='lazy',MOZ_USE_XINPUT2='1')
 for p in Path('/proc').iterdir():
  try:
@@ -108,6 +113,9 @@ try:
    r=b.call('browsingContext.navigate',{'context':context,'url':os.environ.get('PROBE_PAGE_URL','http://127.0.0.1:'+str(http.server_port)+'/index.html'),'wait':'complete'})
    if r.get('type')=='error':raise RuntimeError(str(r))
    def evaluate(expr):
+    if os.environ.get('PROBE_FINAL_SHORT_CHECK'):
+     if not os.environ.get('PROBE_DISABLE_HARDWARE'):raise RuntimeError('Brief check is only for the hardware-disable case')
+     for old,new in [('setTimeout(r,2000)','setTimeout(r,200)'),('setTimeout(r,6000)','setTimeout(r,800)'),('setTimeout(r,1500)','setTimeout(r,600)'),('setTimeout(r,300)','setTimeout(r,100)'),('setTimeout(r,700)','setTimeout(r,400)')]:expr=expr.replace(old,new)
     r=b.call('script.evaluate',{'expression':expr,'target':{'context':context},'awaitPromise':True,'resultOwnership':'none'})
     if r.get('type')=='error' or r.get('result',{}).get('type')=='exception':raise RuntimeError(str(r)[:1200])
     return value(r['result']['result'])
@@ -119,6 +127,7 @@ try:
     setup="let ms=new MediaSource();let opened=new Promise(r=>ms.addEventListener('sourceopen',r,{once:true}));v.src=URL.createObjectURL(ms);await opened;let mime='video/mp4; codecs=\"avc1.640028,mp4a.40.2\"';if(!MediaSource.isTypeSupported(mime))throw Error('MSE type unavailable');let sb=ms.addSourceBuffer(mime),bytes=await (await fetch("+json.dumps(media)+")).arrayBuffer();let updated=new Promise((r,j)=>{sb.addEventListener('updateend',r,{once:true});sb.addEventListener('error',j,{once:true})});sb.appendBuffer(bytes);await updated;ms.endOfStream();"
    row['mse']=bool(os.environ.get('PROBE_MSE'))
    row['start']=evaluate("(async()=>{let v=document.getElementById('v');"+setup+"await Promise.race([v.play(),new Promise((_,r)=>setTimeout(()=>r(Error('play timeout')),10000))]);await new Promise(r=>setTimeout(r,2000));return {ready:v.readyState,width:v.videoWidth,audio:v.mozHasAudio}})()")
+   row['sample_ms']=800 if os.environ.get('PROBE_FINAL_SHORT_CHECK') else 6000
    row['pacing_requested']=bool(os.environ.get('PROBE_PACING'))
    first=ticks(proc.pid);start=time.monotonic()
    row['playback']=evaluate("(async()=>{let v=document.getElementById('v'),a=v.getVideoPlaybackQuality();let intervals=[],previous=null,callback=null,collect=(t)=>{if(previous!==null)intervals.push(t-previous);previous=t;callback=v.requestVideoFrameCallback(collect)};if("+json.dumps(bool(os.environ.get('PROBE_PACING')))+")callback=v.requestVideoFrameCallback(collect);await new Promise(r=>setTimeout(r,6000));if(callback!==null)v.cancelVideoFrameCallback(callback);intervals.sort((a,b)=>a-b);let pacing=intervals.length?{samples:intervals.length,medianMs:intervals[Math.floor(intervals.length/2)],p95Ms:intervals[Math.min(intervals.length-1,Math.ceil(intervals.length*.95)-1)],maxMs:intervals[intervals.length-1]}:null;let q=v.getVideoPlaybackQuality(),c=document.createElement('canvas');c.width=64;c.height=36;let g=c.getContext('2d');g.drawImage(v,0,0,64,36);let d=g.getImageData(0,0,64,36).data,lo=765,hi=0;for(let i=0;i<d.length;i+=4){let x=d[i]+d[i+1]+d[i+2];lo=Math.min(lo,x);hi=Math.max(hi,x)}return {width:v.videoWidth,height:v.videoHeight,frames:q.totalVideoFrames-a.totalVideoFrames,dropped:q.droppedVideoFrames-a.droppedVideoFrames,pixelRange:hi-lo,error:v.error&&v.error.code,time:v.currentTime,frameCallbackTiming:pacing}})()")

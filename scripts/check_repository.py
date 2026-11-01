@@ -15,6 +15,10 @@ def main():
   for entry in manifest[key]:
    file=ROOT/'patches'/group/entry['name']
    if hashlib.sha256(file.read_bytes()).hexdigest()!=entry['sha256']:errors.append('Patch checksum mismatch: '+str(file.relative_to(ROOT)))
+ runtime=ROOT/'runtime-pins.json'
+ if runtime.exists():
+  pins=json.loads(runtime.read_text());patch=ROOT/pins['patch']
+  if hashlib.sha256(patch.read_bytes()).hexdigest()!=pins['patch_sha256']:errors.append('Runtime patch checksum mismatch')
  index=json.loads((ROOT/'evidence/index.json').read_text())
  for entry in index['files']:
   if hashlib.sha256((ROOT/'evidence'/entry['file']).read_bytes()).hexdigest()!=entry['sha256']:errors.append('Evidence checksum mismatch: '+entry['file'])
