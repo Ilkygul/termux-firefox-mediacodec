@@ -31,6 +31,16 @@ fi
 # A build-host-only port selects ThinLTO; no phone runtime behavior changes.
 if [[ "$stage" == patched ]]; then
  cp -- "$source_dir/../patches/native-host/native-host-rust-thin-lto.patch" "$work/x11-packages/firefox/1000-build-host-thin-lto.patch"
+ cp -- "$source_dir/check_plane_layout.py" "$work/x11-packages/firefox/fold-check-plane-layout.py"
+ python3 - "$work/x11-packages/firefox/build.sh" <<'PATCH_RECIPE'
+from pathlib import Path
+import sys
+p=Path(sys.argv[1]);text=p.read_text()
+needle='termux_step_make() {\n'
+assert needle in text
+text=text.replace(needle,needle+'\tpython3 "$TERMUX_PKG_BUILDER_DIR/fold-check-plane-layout.py" --source "$TERMUX_PKG_SRCDIR"\n',1)
+p.write_text(text)
+PATCH_RECIPE
 fi
 container_name="${FOLD_FIREFOX_BUILD_CONTAINER:-fold-firefox-builder}"
 image=ghcr.io/termux/package-builder@sha256:44999857244619e25bc8e3427904a16d36cc0c0e087704af039e5bdf94814ac9

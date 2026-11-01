@@ -206,7 +206,7 @@
 +  // NV12 chroma shares one interleaved allocation. Validate that entire
 +  // allocation at its original start; the V samples begin one byte later and
 +  // do not consume a full extra stride beyond the final UV row.
-+  auto boundsBuffer = b;
++  VideoData::YCbCrBuffer boundsBuffer = b;
 +  if (isNV12) {
 +    boundsBuffer.mPlanes[2].mData = boundsBuffer.mPlanes[1].mData;
 +  }

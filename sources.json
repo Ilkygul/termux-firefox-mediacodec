@@ -185,7 +185,7 @@
     },
     {
       "name": "1002-native-mediacodec-prototype.patch",
-      "sha256": "9ead67842964aa5929a028f10c986a3be5570221ae8b40d925f2870c888dc6e4"
+      "sha256": "72427ed23e8c616de27723d2a53e5b969f60c05b365280af774d319bb744e4ec"
     },
     {
       "name": "1003-native-decoder-output-diagnostics.patch",

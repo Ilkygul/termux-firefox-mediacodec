@@ -1,0 +1,11 @@
+{
+  "actual_upstream_buffer_type_declarations": true,
+  "owning_subclass_is_not_copyable": true,
+  "plane_metadata_base_is_copyable": true,
+  "candidate_bounds_normalization_compiles": true,
+  "upstream_bounds_check_retained": true,
+  "truncated_and_missing_buffers_rejected": true,
+  "excessive_stride_and_height_rejected": true,
+  "MediaData_h_sha256": "07dacf00dabeb37bb8f233016d169a3a7c496bcd7679331d119b2d74b7a032ad",
+  "not_browser_playback_certification": true
+}
