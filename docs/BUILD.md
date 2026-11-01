@@ -30,15 +30,15 @@ Build cbindgen in the isolated tool directory rather than replacing a global ins
 ```sh
 CARGO_HOME="$PWD/.work/native/cargo-cache" cargo install --locked --root "$PWD/.work/native/native-build-tools" --version 0.29.4 cbindgen
 python .work/native/native-stage.py configure
-python .work/native/native-stage.py build --jobs 2
+python .work/native/native-stage.py build --jobs 1
 ```
 
-The wrapper targets API 24, uses ThinLTO, one Cargo job, low build priority, two linker threads and affinity to the two highest-frequency available CPU cores. The object directory and Cargo/cache data remain under `.work/native`. No updater or browser installation runs here.
+The wrapper targets API 24, uses ThinLTO, one build job by default, low build priority, two linker threads and affinity to the two highest-frequency available CPU cores. The object directory and Cargo/cache data remain under `.work/native`. No updater or browser installation runs here. Using `--jobs 2` enables two build tasks, including Cargo via Mozilla's jobserver; `CARGO_BUILD_JOBS=1` alone does not override that jobserver. The active candidate was resumed incrementally with `--jobs 1` after two simultaneous Rust compilations consumed unnecessary memory. The initial 3/4 GiB pause/resume thresholds also stalled a single Rust task while it retained memory; the maintained thresholds below reserve 1.5 GiB instead. They are local responsiveness settings, not measured universal safety limits.
 
 The controller samples available memory and the existing desktop metrics cache every
-10 seconds. During compilation it pauses only its own process group below 3 GiB
+10 seconds. During compilation it pauses only its own process group below 1.5 GiB
 available memory, at a fresh CPU temperature of at least 80 °C, or at a fresh total
-CPU utilization of at least 85%. It resumes above 4 GiB, below 70 °C and below 65%
+CPU utilization of at least 85%. It resumes above 2 GiB, below 70 °C and below 65%
 CPU utilization. Configuration uses 512/768 MiB memory thresholds instead. Missing
 or stale desktop metrics are ignored; memory checks still run. Temperature values
 use this environment's existing highest-readable CPU sensor, not a universal SoC

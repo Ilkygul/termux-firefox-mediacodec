@@ -6,7 +6,7 @@ import os,sys,subprocess,time,runpy,json,signal,argparse
 B=Path(__file__).resolve().parent
 parser=argparse.ArgumentParser(description=__doc__)
 parser.add_argument('stage',nargs='?',default='configure',choices=['configure','build'])
-parser.add_argument('--jobs',type=int,choices=[1,2],default=2)
+parser.add_argument('--jobs',type=int,choices=[1,2],default=1)
 options=parser.parse_args();stage=options.stage
 env=runpy.run_path(str(B/'native-build-env.py'))['build_env']()
 if stage=='build':env['FOLD_NATIVE_BUILD_JOBS']=str(options.jobs)
@@ -17,8 +17,8 @@ def cpu_frequency(cpu):
  except (OSError,ValueError):return 0
 cpus=sorted(os.sched_getaffinity(0),key=lambda cpu:(-cpu_frequency(cpu),cpu))[:2]
 def limits():os.nice(10);os.sched_setaffinity(0,cpus)
-minimum_memory_kib=(512 if stage=='configure' else 3072)*1024
-resume_memory_kib=(768 if stage=='configure' else 4096)*1024
+minimum_memory_kib=(512 if stage=='configure' else 1536)*1024
+resume_memory_kib=(768 if stage=='configure' else 2048)*1024
 number=1
 while (B/f'native-{stage}-{number}.log').exists():number+=1
 log=B/f'native-{stage}-{number}.log'
@@ -62,3 +62,5 @@ finally:
   os.killpg(proc.pid,signal.SIGTERM)
   try:proc.wait(timeout=15)
   except subprocess.TimeoutExpired:os.killpg(proc.pid,signal.SIGKILL);proc.wait()
+  state.update(status='stopped',returncode=proc.returncode,elapsed_seconds=time.monotonic()-started)
+  (B/'native-stage-current.json').write_text(json.dumps(state,indent=2))
