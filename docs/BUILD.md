@@ -1,6 +1,6 @@
 # Build the pinned candidate
 
-The source archive, official Termux recipe revision, 32 official patch checksums and nine local patch checksums are recorded in [`sources.json`](../sources.json). They identify the successfully built source. **They do not make an old Firefox release safe to keep indefinitely.** Rebase the pins and patches for newer security releases.
+The source archive, official Termux recipe revision, 35 official patch checksums and nine local patch checksums are recorded in [`sources.json`](../sources.json). On this candidate branch they identify the Firefox 159 source being built. The archived successful-build and playback receipts belong to Firefox 158; they do not validate the new candidate. **They do not make an old Firefox release safe to keep indefinitely.** Rebase the pins and patches for newer security releases.
 
 ## Official Linux cross-build route
 
@@ -33,7 +33,23 @@ python .work/native/native-stage.py configure
 python .work/native/native-stage.py build --jobs 2
 ```
 
-The wrapper targets API 24, uses ThinLTO, one Cargo job, low build priority and a two-core build affinity. The object directory and Cargo/cache data remain under `.work/native`. No updater or browser installation runs here.
+The wrapper targets API 24, uses ThinLTO, one Cargo job, low build priority, two linker threads and affinity to the two highest-frequency available CPU cores. The object directory and Cargo/cache data remain under `.work/native`. No updater or browser installation runs here.
+
+The controller samples available memory and the existing desktop metrics cache every
+10 seconds. During compilation it pauses only its own process group below 3 GiB
+available memory, at a fresh CPU temperature of at least 80 °C, or at a fresh total
+CPU utilization of at least 85%. It resumes above 4 GiB, below 70 °C and below 65%
+CPU utilization. Configuration uses 512/768 MiB memory thresholds instead. Missing
+or stale desktop metrics are ignored; memory checks still run. Temperature values
+use this environment's existing highest-readable CPU sensor, not a universal SoC
+junction-temperature measurement. These are conservative local build settings,
+not firmware thermal limits. Android's own thermal controls remain enabled.
+
+No new monitoring service is installed. The controller exits when its build ends.
+Send SIGTERM to the controller process for cleanup: it resumes a paused build,
+terminates its own process group and waits for it. A forced SIGKILL cannot run that
+cleanup. The running browser, desktop and unrelated user workloads are untouched.
+The JSON status contains the child build PID; it is not the controller PID.
 
 The preparation/runner scripts are the maintained form of the successful native settings. The public repository layout was reorganized after deployment; the original complete native build is proven by the archived receipts, not by a claim that a second full build was performed after that reorganization.
 
